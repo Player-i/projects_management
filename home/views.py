@@ -38,10 +38,12 @@ def home(request):
                 .order_by("-id")  # Reverse order by project ID
                 .all()
             )
-
         context["projects"] = projects
         context["user"] = user
-    return render(request, "home.html", context=context)
+        return render(request, "home.html", context=context)
+
+    else:
+        return redirect("login")
 
 
 def create_users(request):
