@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<style>
+    /* Your additional CSS styles specific to project_details.html */
+
+    body {
+        background-color: #f8f8f8; /* Light gray background similar to Notion UI */
+        font-family: "Helvetica Neue", Arial, sans-serif; /* Similar font to iPhone UI */
+    }
+
+    .project-details-container {
+        display: grid;
+        grid-template-columns: 1fr 2fr; /* Split into two columns: left and center-right */
+        gap: 20px;
+        max-width: 800px;
+        margin: 50px auto 0; /* Added top margin */
+        background-color: #fff; /* Set the background color to white */
+        border-radius: 8px; /* Rounded corners */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Shadow effect */
+    }
+
+    .project-info {
+        grid-column: 1; /* Project name and description on the left */
+        color: #000; /* Text color for project info, change it to black */
+        padding: 20px; /* Added padding for better aesthetics */
+    }
+
+    .project-steps {
+        grid-column: 2; /* Steps on the center-right */
+        padding: 20px; /* Added padding for better aesthetics */
+    }
+
+    .project-name {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .project-description {
+        margin-bottom: 20px;
+    }
+
+    .step-container {
+        background-color: #f2f2f2;
+        border-radius: 8px; /* Rounded corners for step containers */
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+
+    .step-name {
+        font-weight: bold;
+    }
+
+    .step-due-date {
+        color: #666;
+    }
+
+    .step-details-link {
+        color: #007AFF; /* Blue color similar to iPhone UI links */
+        text-decoration: none;
+    }
+
+    /* Style the back button */
+    .back-button {
+        display: inline-block;
+        margin-top: 20px; /* Add top margin for spacing */
+        background-color: #007AFF;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="project-details-container">
+    <div class="project-info">
+        <h1 class="project-name">{{ project.name }}</h1>
+        <p class="project-description">{{ project.description }}</p>
+        <p>Fecha de Finalizacion: {{ project.due_date }}</p>
+        <!-- Add the back button to go back to the home page -->
+        <a href="{% url 'home' %}" class="back-button">Todos los Proyectos</a>
+    </div>
+    <div class="project-steps">
+        {% if user.is_project_manager %}
+            <h3>Pasos del Evento</h3>
+        {% else %}
+            <h3>Pasos a realizar</h3>
+        {% endif %}
+        {% for step in project.step_set.all %}
+            {% if user.is_project_manager %}
+                <div class="step-container">
+                    <p class="step-name">{{ step.name }}</p>
+                    <p class="step-due-date">Fecha de Finalizacion: {{ step.due_date }}</p>
+                    {% if user.is_project_manager %}
+                        <p>Asignado a {{ step.assigned_to }}</p>
+                    {% endif %}
+                    <p><a class="step-details-link" href="{% url 'step_details' step.id %}">Mas detalles</a></p>
+                </div>
+
+            {% elif step.assigned_to == user.username %}
+            <div class="step-container">
+                <p class="step-name">{{ step.name }}</p>
+                <p class="step-due-date">Fecha de Finalizacion: {{ step.due_date }}</p>
+                {% if user.is_project_manager %}
+                    <p>Asignado a {{ step.assigned_to }}</p>
+                {% endif %}
+                <p><a class="step-details-link" href="{% url 'step_details' step.id %}">Mas detalles</a></p>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

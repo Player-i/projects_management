@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container step-details-container">
+    <div id="step_details">
+        <h1>Detalles del paso:</h1>
+        <h2>{{ step.name }}</h2>
+        <p>Descripcion del paso: {{ step.description }}</p>
+        <p>Fecha de Finalizacion {{ step.due_date }}</p>
+        <p>Asignado a: {{ step.assigned_to }}</p>
+        <!-- Add any other step details you want to display -->
+
+        <!-- Step Done Form -->
+        <form method="post">
+            {% csrf_token %}
+            {{ step_done_form.as_p }}
+
+            <!-- Buttons div to hold both buttons -->
+            <div class="buttons-div">
+                <input type="submit" name="step_done_form" value="Mark as Done" class="btn btn-primary">
+                <a href="{% url 'home' %}" class="btn btn-secondary">Todo tus proyectos</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: #f2f2f2;
+        margin: 0;
+        padding: 0;
+    }
+
+
+    /* Your additional CSS styles specific to step_details.html */
+    .container {
+        max-width: 600px;
+        margin: 30px auto;
+        padding: 20px;
+    }
+
+    .step-details-container {
+        background-color: #fff;
+        border: 1px solid #dbdbdb;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+
+    h1 {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    h2 {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    p {
+        margin-bottom: 5px;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .btn-primary {
+        background-color: #8a00b8;
+        color: #ffffff;
+        border: none;
+    }
+
+    .btn-secondary {
+        background-color: #dbdbdb;
+        color: #000;
+        border: none;
+    }
+
+    .buttons-div {
+        display: flex;
+        gap: 10px; /* Adjust the gap between the buttons */
+        margin-top: 20px; /* Add top margin for spacing */
+    }
+
+    /* Rest of your CSS styles */
+</style>
+
+{% endblock %}

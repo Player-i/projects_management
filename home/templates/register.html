@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    body {
+        background-color: black;
+    }
+
+    .register-container {
+        max-width: 600px;
+        margin: 40px auto 0; /* Added 40px margin to the top */
+        padding: 20px;
+        background-color: white;
+        color: black;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        border-radius: 5px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 80vh;
+    }
+
+    .register-form-container {
+        width: 100%;
+        max-width: 400px;
+    }
+
+    .form-group label {
+        font-weight: bold;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 15px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+
+    .btn-register {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: black;
+        color: white;
+        border: none;
+        border-radius: 7px; /* Round borders */
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        text-decoration: none;
+    }
+
+    .btn-register:hover {
+        background-color: #333; /* Darker background on hover */
+    }
+
+    .login-link {
+        margin-top: 10px;
+    }
+
+    .login-link a {
+        color: #007BFF;
+        text-decoration: none;
+    }
+
+    .login-link a:hover {
+        color: #0056b3;
+    }
+</style>
+
+<div class="register-container">
+    <div class="register-form-container">
+        <h2>Registrate</h2>
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="{{ form.username.id_for_label }}">Nombre</label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                <small class="text-danger">{{ form.username.errors }}</small>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.email.id_for_label }}">Email</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                <small class="text-danger">{{ form.email.errors }}</small>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.password1.id_for_label }}">Contraseña</label>
+                {{ form.password1 }}
+                {% if form.password1.errors %}
+                <small class="text-danger">{{ form.password1.errors }}</small>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.password2.id_for_label }}">Confirma Contraseña</label>
+                {{ form.password2 }}
+                {% if form.password2.errors %}
+                <small class="text-danger">{{ form.password2.errors }}</small>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn-register">Crear Cuenta</button>
+        </form>
+    </div>
+    <p class="login-link">Tienes una cuenta? <a href="{% url 'login' %}">Inicia Sesion</a></p>
+</div>
+{% endblock %}

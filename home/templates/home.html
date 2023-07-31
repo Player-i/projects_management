@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block title %}{% endblock %}
+
+{% block head %}
+<style>
+    body {
+        background-color: #f2f2f2;
+        margin: 0;
+        padding: 0;
+    }
+
+    .navbar {
+        background-color: #333;
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 20px;
+        align-items: center;
+    }
+
+    .navbar a {
+        color: white;
+        text-decoration: none;
+        margin: 0 5px;
+        padding: 8px 12px;
+        border-radius: 5px;
+    }
+
+    .navbar p {
+        color: white;
+        margin: 0;
+        font-weight: bold;
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
+    }
+
+    .container h1 {
+        margin: 10px 0;
+        font-size: 40px; /* Increased font size for "Proyectos" */
+    }
+
+    .projects-container {
+        background-color: white;
+        border-radius: 5px;
+        padding: 20px;
+        margin: 20px;
+        text-align: center;
+        max-width: 600px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Apple UI-like shadow */
+    }
+
+    .projects-container h2 a {
+        color: black;
+        text-decoration: none;
+    }
+
+    .projects-container p {
+        margin: 5px 0;
+    }
+
+    .projects-container h3 {
+        margin: 10px 0 5px;
+    }
+
+    .projects-container ul {
+        list-style: none;
+        padding-left: 0;
+    }
+
+    .projects-container ul li {
+        margin-bottom: 5px;
+    }
+
+    /* Media Query for Mobile View */
+    @media screen and (max-width: 600px) {
+        .navbar {
+            flex-direction: column;
+            text-align: center;
+        }
+        .navbar a {
+            margin: 5px 0;
+        }
+        .navbar p {
+            margin-top: 10px;
+        }
+        .container h1 {
+            font-size: 24px; /* Reduced font size for mobile view */
+        }
+        .projects-container {
+            margin: 10px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="navbar">
+    <div>
+        {% if user.is_authenticated %}
+            <a href="/logout/">Cerrar Sesion</a>
+            {% if user.is_project_manager %}
+            <a href="/create/">Nuevo Proyecto</a>
+            <a href="/create_users/">Crea Ayudante</a>
+            {% endif %}
+        {% else %}
+            <a href="/login/">Inicia Sesion</a>
+        {% endif %}
+    </div>
+    <p>{{ user.username }}</p>
+</div>
+
+<div class="container">
+    <h1>Eventos</h1>
+    {% for project in projects %}
+        <div class="projects-container">
+            <h2><a href="{% url 'project_details' project.id %}">{{ project.name }}</a></h2>
+            <p>{{ project.description }}</p>
+            <p>Fecha de Finalizacion: {{ project.due_date }}</p>
+            <ul>
+            </ul>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

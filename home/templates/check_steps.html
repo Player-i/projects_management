@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="">
+    </head>
+    <body>
+
+        {% if user.is_project_manager %}
+            <h1>Pasos a seguir</h1>
+
+                    {% for project in projects %}
+                    <h2>{{ project.name }}</h2>
+                    <p>Description: {{ project.description }}</p>
+                    <p>Due Date: {{ project.due_date }}</p>
+                    <h3>Steps:</h3>
+                    <ul>
+                        {% for step in project.step_set.all %}
+                            <li>{{ step.name }} - Due Date: {{ step.due_date }}</li>
+                            <li>Asignado a {{ step.assigned_to }}</li>
+                            <li><a href="{% url 'step_details' step.id %}">More Details</a></li>
+                        {% endfor %}
+                    </ul>
+                {% endfor %}
+          {% else %}
+          <h1>Tus pasos a seguir</h1>
+
+          {% for project in projects %}
+                    <h2>{{ project.name }}</h2>
+                    <p>Description: {{ project.description }}</p>
+                    <p>Due Date: {{ project.due_date }}</p>
+                    <h3>Steps:</h3>
+                    <ul>
+                        {% for step in project.step_set.all %}
+                            {% if step.assigned_to == user.username  %}
+                                <li>{{ step.name }} - Due Date: {{ step.due_date }}</li>
+                                <li><a href="{% url 'step_details' step.id %}">More Details</a></li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+      {% endfor %}
+        {% endif %}
+        
+        <script src="" async defer></script>
+    </body>
+</html>
