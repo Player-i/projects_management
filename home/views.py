@@ -41,7 +41,6 @@ def home(request):
         context["projects"] = projects
         context["user"] = user
         return render(request, "home.html", context=context)
-
     else:
         return redirect("login")
 
