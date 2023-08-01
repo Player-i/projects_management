@@ -134,7 +134,8 @@ def step_details(request, step_id):
 
 
 def create_project(request):
-    users = MyUser.objects.all()
+    user = request.user
+    users = MyUser.objects.filter(manager=user.email)
     StepFormSet = forms.formset_factory(
         form=StepForm, extra=0, min_num=1
     )  # min_num is set to 1 to have at least one step
