@@ -80,9 +80,14 @@ AUTH_USER_MODEL = "home.MyUser"
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#     }
+# }
 # RAILWAY
-# db_from_env = dj_database_url.config(conn_max_age=500)
-# DATABASES["default"].update(db_from_env)
 
 DATABASES = {
     "default": {
@@ -95,12 +100,7 @@ DATABASES = {
     }
 }
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
-}
+CSRF_TRUSTED_ORIGINS = ["https://projectsmanagement-production.up.railway.app"]
 
 
 # Password validation
