@@ -4,11 +4,19 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-django = "*"
-gunicorn = "*"
+django = "==4.2.4"
+gunicorn = "==21.2.0"
 django-heroku = "*"
-psycopg2-binary = "*"
-mysqlclient = "*"
+psycopg2-binary = "==2.9.7"
+mysqlclient = "==2.1.1"
+whitenoise = "==6.5.0"
+asgiref = "==3.7.2"
+dj-database-url = "==2.0.0"
+packaging = "==23.1"
+psycopg2 = "==2.9.7"
+sqlparse = "==0.4.4"
+typing-extensions = "==4.7.1"
+tzdata = "==2023.3"
 
 [dev-packages]
 
