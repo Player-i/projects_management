@@ -141,7 +141,7 @@ def create_project(request):
     )  # min_num is set to 1 to have at least one step
     if request.method == "POST":
         project_form = ProjectForm(request.POST)
-        formset = StepFormSet(request.POST, prefix="steps")
+        formset = StepFormSet(request.POST, request.FILES, prefix="steps")
         print(formset)
 
         if project_form.is_valid() and formset.is_valid():
@@ -196,3 +196,96 @@ def project_details(request, project_id):
     context["steps"] = steps
 
     return render(request, "project_details.html", context)
+
+
+def edit_project(request, project_id):
+    user = request.user
+    users = MyUser.objects.filter(manager=user.email)
+    project = get_object_or_404(Project, id=project_id)
+    steps = project.step_set.all()
+
+    StepFormSet = forms.formset_factory(form=StepForm, extra=0, min_num=1)
+
+    if request.method == "POST":
+        project_form = ProjectForm(request.POST, instance=project)
+        formset = StepFormSet(request.POST, request.FILES, prefix="steps")
+
+        if project_form.is_valid() and formset.is_valid():
+            project = project_form.save(commit=False)
+
+            # Save the project to the database with the author assigned
+            project.save()
+
+            # Remove the first step from the queryset and delete it
+            if steps.exists():
+                first_step = steps.first()
+                first_step.delete()
+
+            for form in formset:
+                step = form.save(commit=False)
+                step.project = project
+                assigned_to = form.cleaned_data.get("assigned_to")
+                step.assigned_to = assigned_to
+                step.save()
+
+            return redirect("home")  # Redirect to the home page
+
+    else:
+        project_form = ProjectForm(instance=project)
+        formset = StepFormSet(prefix="steps")
+
+    total_form_count = formset.total_form_count()
+
+    return render(
+        request,
+        "edit_project.html",
+        {
+            "project_form": project_form,
+            "formset": formset,
+            "users": users,
+            "steps": steps,
+            "total_form_count": total_form_count,
+            "project": project,
+        },
+    )
+
+
+def edit_step(request, step_id):
+    user = request.user
+    users = MyUser.objects.filter(manager=user.email)
+    step = get_object_or_404(Step, id=step_id)
+
+    if request.method == "POST":
+        form = StepForm(request.POST, request.FILES, instance=step)
+        if form.is_valid():
+            step = form.save(commit=False)
+            assigned_to = form.cleaned_data.get(
+                "assigned_to"
+            )  # Get the value from the dropdown
+            step.assigned_to = assigned_to
+            step.save()
+            # Redirect to a success page or the step details page
+            return redirect("step_details", step_id=step_id)
+    else:
+        form = StepForm(instance=step)
+
+    return render(
+        request, "edit_step.html", {"form": form, "step": step, "users": users}
+    )
+
+
+def delete_project(request, project_id):
+    context = {}
+    user = request.user
+    context["user"] = user
+
+    # Get the project instance using the project_id from the URL
+    project = get_object_or_404(Project, id=project_id)
+    context["project"] = project
+
+    if request.method == "POST":
+        project.delete()
+        # Redirect the user to a different page after deletion (you can customize this URL)
+        return redirect("home")
+
+    return render(request, "delete_project.html", context)

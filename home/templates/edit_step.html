@@ -1,0 +1,200 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="navbar" style="background-color: #333; color: #fff;">
+    <div>
+        {% if user.is_authenticated %}
+            <a href="/logout/">Cerrar Sesion</a>
+            <a href="/create/">Nuevo Proyecto</a>
+            <a href="/create_users/">Crea Ayudante</a>
+        {% else %}
+            <a href="/login/">Inicia Sesion</a>
+        {% endif %}
+    </div>
+    <a href="/"><p>{{ user.username }}</p></a>
+</div>
+
+<div class="container edit-step-container" style="background-color: #f2f2f2;">
+    <h1>Edita Tarea</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <!-- Customize each form field as needed -->
+        <div class="form-group">
+            <label for="{{ form.name.id_for_label }}">Nombre de la Tarea:</label>
+            <input type="text" name="{{ form.name.name }}" maxlength="100" required id="{{ form.name.auto_id }}" class="form-control" value="{{ form.name.value }}">
+            {% if form.name.errors %}
+                <ul class="errorlist">
+                    {% for error in form.name.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.file.id_for_label }}">Archivo:</label>
+            <input type="file" name="{{ form.file.name }}" id="{{ form.file.auto_id }}" class="form-control">
+            {% if form.file.errors %}
+                <ul class="errorlist">
+                    {% for error in form.file.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            {% if step.file %}
+                <div class="current-file">
+                    <label>Archivo Subido:</label>
+                    <a href="{{ step.file.url }}" target="_blank">Ver Archivo</a>
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.description.id_for_label }}">Descripcion</label>
+            <textarea name="{{ form.description.name }}" rows="4" required id="{{ form.description.auto_id }}" class="form-control">{{ form.description.value }}</textarea>
+            {% if form.description.errors %}
+                <ul class="errorlist">
+                    {% for error in form.description.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.due_date.id_for_label }}">Fecha de Finalizacion</label>
+            <input type="date" name="{{ form.due_date.name }}" required id="{{ form.due_date.auto_id }}" class="form-control" value="{{ form.due_date.value|date:'Y-m-d' }}">
+            {% if form.due_date.errors %}
+                <ul class="errorlist">
+                    {% for error in form.due_date.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.assigned_to.id_for_label }}">Asignado a:</label>
+            <select name="{{ form.assigned_to.name }}" id="{{ form.assigned_to.auto_id }}" class="form-control">
+                <option value="" selected disabled>Elige una persona</option>
+                {% for user in users %}
+                    <option value="{{ user.username }}" {% if step.assigned_to == user.username %}selected{% endif %}>{{ user.username }}</option>
+                {% endfor %}
+            </select>
+            {% if form.assigned_to.errors %}
+                <ul class="errorlist">
+                    {% for error in form.assigned_to.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        
+        <input type="submit" value="Guardar Cambios" class="btn btn-primary" style="background-color: #8a00b8; color: #fff;">
+    </form>
+</div>
+
+<style>
+    /* Your additional CSS styles specific to edit_step.html */
+    .navbar {
+        background-color: #333;
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 20px;
+        align-items: center;
+        margin-bottom: 50px;
+    }
+
+    .navbar a {
+        color: white;
+        text-decoration: none;
+        margin: 0 5px;
+        padding: 8px 12px;
+        border-radius: 5px;
+    }
+
+    .navbar p {
+        color: white;
+        margin: 0;
+        font-weight: bold;
+    }
+
+    body {
+        background-color: #f2f2f2;
+        margin: 0;
+        padding: 0;
+    }
+   
+    .container.edit-step-container {
+        background-color: #fff;
+        border: 1px solid #dbdbdb;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        display: block;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    textarea,
+    select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #dbdbdb;
+        border-radius: 5px;
+        box-sizing: border-box; /* Ensures padding and border are included in the width */
+    }
+
+    /* Add margin-bottom for each form element to create spacing between them */
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    textarea,
+    select {
+        margin-bottom: 10px;
+    }
+
+    .current-file {
+        padding: 10px;
+        border: 1px solid #dbdbdb;
+        border-radius: 5px;
+        text-decoration: none;
+    }
+
+    .current-file label {
+        font-weight: bold;
+    }
+
+    .current-file a {
+        color: #333;
+        text-decoration: none;
+    }
+
+    input[type="date"] {
+        appearance: none; /* Hide the default appearance of the input */
+        background-color: #fff;
+        border: 1px solid #dbdbdb;
+        border-radius: 5px;
+        padding: 10px;
+    }
+
+    /* Optional: Set the width to fit your form layout */
+    input[type="date"] {
+        width: 100%;
+    }
+
+</style>
+{% endblock %}

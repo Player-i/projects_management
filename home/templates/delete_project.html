@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container delete-project-container">
+    <h1>Borrar Proyecto</h1>
+    <p>¿Estás seguro que quieres borrar este proyecto?</p>
+
+    <!-- Form to handle project deletion -->
+    <form action="{% url 'delete_project' project.id %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Sí</button>
+        <a href="{% url 'project_details' project.id %}" class="btn btn-primary">No</a>
+    </form>
+</div>
+
+<style>
+    /* Your additional CSS styles specific to delete_project.html */
+body {
+    background-color: #f2f2f2;
+    margin: 0;
+    padding: 0;
+}
+
+.container.delete-project-container {
+    background-color: #ffffff;
+    border: 1px solid #dbdbdb;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 600px;
+    margin: 0 auto;
+    margin-top: 50px;
+}
+
+.container.delete-project-container h1 {
+    text-align: center;
+}
+
+.container.delete-project-container p {
+    text-align: center;
+}
+
+.container.delete-project-container form {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.container.delete-project-container button,
+.container.delete-project-container a {
+    margin: 0 10px;
+}
+
+</style>
+{% endblock %}

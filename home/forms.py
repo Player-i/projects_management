@@ -15,7 +15,7 @@ class StepForm(forms.ModelForm):
 
     class Meta:
         model = Step
-        fields = ["name", "description", "due_date"]
+        fields = ["name", "description", "due_date", "file"]
         widgets = {"due_date": forms.DateInput(attrs={"type": "date"})}
 
 

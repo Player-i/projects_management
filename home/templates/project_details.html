@@ -73,6 +73,17 @@
         cursor: pointer;
         text-decoration: none;
     }
+    .delete-button {
+        display: inline-block;
+        margin-top: 20px; /* Add top margin for spacing */
+        background-color: #fd5c63;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        text-decoration: none;
+    }
 
 </style>
 {% endblock %}
@@ -85,12 +96,16 @@
         <p>Fecha de Finalizacion: {{ project.due_date }}</p>
         <!-- Add the back button to go back to the home page -->
         <a href="{% url 'home' %}" class="back-button">Todos los Proyectos</a>
+        {% if user.is_project_manager %}
+        <a href="{% url 'edit_project' project.id %}" class="back-button">Editar Proyecto</a>
+        <a href="{% url 'delete_project' project.id %}" class="delete-button">Borrar Proyecto</a>
+        {% endif %}
     </div>
     <div class="project-steps">
         {% if user.is_project_manager %}
-            <h3>Pasos del Evento</h3>
+            <h3>Tareas del Proyecto</h3>
         {% else %}
-            <h3>Pasos a realizar</h3>
+            <h3>Tareas a realizar</h3>
         {% endif %}
         {% for step in project.step_set.all %}
             {% if user.is_project_manager %}

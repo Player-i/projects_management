@@ -73,6 +73,7 @@ class Step(models.Model):
     due_date = models.DateField(null=True, blank=True)
     is_done = models.BooleanField(default=False)
     assigned_to = models.CharField(max_length=100)
+    file = models.FileField(upload_to="static/steps/", null=True, blank=True)
 
     def __str__(self):
         return self.name

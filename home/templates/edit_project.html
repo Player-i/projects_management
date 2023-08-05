@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<!-- create_project.html -->
 <div class="navbar">
     <div>
         {% if user.is_authenticated %}
@@ -17,11 +16,11 @@
 
 <div class="container register-form-container" style="background-color: #333; color: #fff;">
     <h3>Proyecto</h3>
-    <form method="post" enctype="multipart/form-data">
+    <form method="post"  enctype="multipart/form-data" >
         {% csrf_token %}
-                <p>
+        <p>
             <label for="id_name">Nombre del proyecto:</label>
-            <input type="text" name="name" maxlength="100" required id="id_name">
+            <input type="text" name="name" maxlength="100" value="{{ project.name}}" required id="id_name">
             
             
           </p>
@@ -29,7 +28,7 @@
           
           <p>
             <label for="id_description">Descripcion:</label>
-            <textarea name="description" cols="40" rows="10" required id="id_description">
+            <textarea name="description" cols="40" rows="10"  required id="id_description">{{ project.description}} 
         </textarea>
             
             
@@ -38,44 +37,48 @@
           
           <p>
             <label for="id_due_date">Fecha del Proyecto</label>
-            <input type="date" name="due_date" required id="id_due_date">
+            <input type="date" name="due_date" value="{{ project.due_date|date:'Y-m-d' }}" required id="id_due_date">
             
             
               
             
           </p>
 
+        <input type="hidden" name="steps-TOTAL_FORMS" value="1" id="id_steps-TOTAL_FORMS"><input type="hidden" name="steps-INITIAL_FORMS" value="0" id="id_steps-INITIAL_FORMS"><input type="hidden" name="steps-MIN_NUM_FORMS" value="1" id="id_steps-MIN_NUM_FORMS"><input type="hidden" name="steps-MAX_NUM_FORMS" value="1000" id="id_steps-MAX_NUM_FORMS">
         <h3>Tareas</h3>
-        <div id="step-forms">
-            {{ formset.management_form }}
-
-            {% for form in formset %}
+        <div id="existing-steps">
+            {% for step in steps %}
             <div class="form-group">
-                <label for="{{ form.name.id_for_label }}">Nombre de la tarea</label>
-                {{ form.name }}
+                <label for="id_steps-{{ forloop.counter0 }}-name">Nombre de la tarea</label>
+                <input type="text" name="steps-{{ forloop.counter0 }}-name" value="{{ step.name }}" required>
             </div>
-
+            {% if step.file %}
             <div class="form-group">
-                <label for="{{ form.file.id_for_label }}">Archivo Adjunto:</label>
-                {{ form.file }}
+                
+                <a href="{{ step.file.url }}" target="_blank"><label>Archivo Adjunto:</label></a>
             </div>
+            {% endif %}
 
+            <!-- Add the file input field to change the file -->
             <div class="form-group">
-                <label for="{{ form.description.id_for_label }}">Descripcion</label>
-                {{ form.description }}
+                <label for="id_steps-{{ forloop.counter0 }}-file">Archivo Adjunto (Dejar en blanco para mantener archivo)</label>
+                <input type="file" name="steps-{{ forloop.counter0 }}-file" accept="image/*, .pdf, .doc, .docx">
+            </div>
+    
+            <div class="form-group">
+                <label for="id_steps-{{ forloop.counter0 }}-description">Descripcion</label>
+                <textarea name="steps-{{ forloop.counter0 }}-description" rows="4" required>{{ step.description }}</textarea>
             </div>
             <div class="form-group">
-                <label for="{{ form.due_date.id_for_label }}">Fecha de Finalizacion</label>
-                {{ form.due_date }}
+                <label for="id_steps-{{ forloop.counter0 }}-due_date">Fecha de Finalizacion</label>
+                <input type="date" name="steps-{{ forloop.counter0 }}-due_date" value="{{ step.due_date|date:'Y-m-d' }}" required>
             </div>
-
-            <!-- Change the input field to a select element for "Assigned To" field -->
             <div class="form-group">
-                <label for="{{ form.prefix }}-assigned_to">Asignado a:</label>
-                <select name="{{ form.prefix }}-assigned_to" id="{{ form.prefix }}-assigned_to" class="form-control">
-                    <option value="" selected disabled>Elige una persona</option>
+                <label for="id_steps-{{ forloop.counter0 }}-assigned_to">Asignado a:</label>
+                <select name="steps-{{ forloop.counter0 }}-assigned_to">
+                    <option value="" disabled>Elige una persona</option>
                     {% for user in users %}
-                    <option value="{{ user.username }}">{{ user.username }}</option>
+                        <option value="{{ user.username }}" {% if step.assigned_to == user.username %}selected{% endif %}>{{ user.username }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -83,7 +86,8 @@
         </div>
 
         <button type="button" id="add-step-btn" class="btn btn-primary">Añade una tarea</button>
-        <input type="submit" value="Crear Proyecto" class="btn btn-primary">
+
+        <input type="submit" value="Guardar Cambios" class="btn btn-primary">
     </form>
 </div>
 
@@ -104,14 +108,14 @@
             select.id = select.id.replace(/__prefix__/g, formIdx);
             select.name = select.name.replace(/__prefix__/g, formIdx);
         });
-        document.getElementById("step-forms").appendChild(emptyFormEl);
+        document.getElementById("existing-steps").appendChild(emptyFormEl); // Use "existing-steps" instead of "step-forms"
     }
 
     // Add step button click event
     function updateID() {
         addStepForm("steps");
         formIdx++;
-        $('#id_steps-TOTAL_FORMS').val(formIdx);
+        $('#id_steps-TOTAL_FORMS').val( formIdx);
     }
 </script>
 
@@ -125,6 +129,7 @@
         <label for="id_steps-__prefix__-file">Archivo Adjunto:</label>
         <input type="file" name="steps-__prefix__-file" id="id_steps-__prefix__-file" class="form-control">
     </div>
+
     <div class="form-group">
         <label for="id_steps-__prefix__-description">Descripcion</label>
         <textarea name="steps-__prefix__-description" cols="40" rows="10" id="id_steps-__prefix__-description" class="form-control"></textarea>
@@ -147,9 +152,6 @@
 </div>
 <style>
 
-    .register-form-container {
-        
-    }
     .navbar {
         background-color: #333;
         display: flex;
@@ -177,84 +179,83 @@
         margin: 0;
         padding: 0;
     }
-   
-        /* Your additional CSS styles specific to create_project.html */
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-    
-        .register-form-container {
-            background-color: #ffffff;
-            border: 1px solid #dbdbdb;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-    
-        .form-group {
-            margin-bottom: 20px;
-        }
-    
-        .form-group label {
-            font-weight: bold;
-            margin-bottom: 5px;
-            display: block;
-        }
-    
-        input[type="text"],
-        input[type="email"],
-        input[type="password"],
-        textarea,
-        select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #dbdbdb;
-            border-radius: 5px;
-            box-sizing: border-box; /* Ensures padding and border are included in the width */
-        }
-    
-        /* Add margin-bottom for each form element to create spacing between them */
-        input[type="text"],
-        input[type="email"],
-        input[type="password"],
-        textarea,
-        select {
-            margin-bottom: 10px;
-        }
-    
-        .btn-primary {
-            background-color: #8a00b8;
-            color: #ffffff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-    
-        .login-link {
-            text-align: center;
-            margin-top: 20px;
-        }
-    
-        .login-link a {
-            color: #8a00b8;
-            text-decoration: none;
-        }
 
-        input[type="date"] {
-            appearance: none; /* Hide the default appearance of the input */
-            background-color: #ffffff;
-            border: 1px solid #dbdbdb;
-            border-radius: 5px;
-            padding: 10px;
-        }
-    
-        /* Optional: Set the width to fit your form layout */
-        input[type="date"] {
-            width: 100%;
-        }
-    
+    /* Your additional CSS styles specific to create_project.html */
+    .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .register-form-container {
+        background-color: #ffffff;
+        border: 1px solid #dbdbdb;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        display: block;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    textarea,
+    select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #dbdbdb;
+        border-radius: 5px;
+        box-sizing: border-box; /* Ensures padding and border are included in the width */
+    }
+
+    /* Add margin-bottom for each form element to create spacing between them */
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    textarea,
+    select {
+        margin-bottom: 10px;
+    }
+
+    .btn-primary {
+        background-color: #8a00b8;
+        color: #ffffff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .login-link {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .login-link a {
+        color: #8a00b8;
+        text-decoration: none;
+    }
+
+    input[type="date"] {
+        appearance: none; /* Hide the default appearance of the input */
+        background-color: #ffffff;
+        border: 1px solid #dbdbdb;
+        border-radius: 5px;
+        padding: 10px;
+    }
+
+    /* Optional: Set the width to fit your form layout */
+    input[type="date"] {
+        width: 100%;
+    }
 </style>
 {% endblock %}

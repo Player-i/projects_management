@@ -9,6 +9,9 @@
         <p>Descripcion del paso: {{ step.description }}</p>
         <p>Fecha de Finalizacion {{ step.due_date }}</p>
         <p>Asignado a: {{ step.assigned_to }}</p>
+        {% if step.file %}
+        <p><a href="{{ step.file.url }}"  target="_blank">Ver Archivo Subido</a></p>
+        {% endif %}
         <!-- Add any other step details you want to display -->
 
         <!-- Step Done Form -->
@@ -20,6 +23,7 @@
             <div class="buttons-div">
                 <input type="submit" name="step_done_form" value="Ya esta hecho?" class="btn btn-primary">
                 <a href="{% url 'home' %}" class="btn btn-secondary">Todo tus proyectos</a>
+                <a href="{% url 'edit_step' step.id %}" class="btn btn-secondary">Edita Tarea</a>
             </div>
         </form>
     </div>

@@ -96,6 +96,53 @@
             margin: 10px;
         }
     }
+
+    .popup {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+    }
+
+    .popup-content {
+        visibility: hidden;
+        background-color: #f2f2f2; /* Updated background color */
+        color: #333; /* Updated text color */
+        text-align: center;
+        border: 1px solid #ccc; /* Updated border color */
+        border-radius: 8px; /* Increased border radius for a smoother look */
+        position: absolute;
+        z-index: 1;
+        top: 50%; /* Updated: Center the popup vertically */
+        left: 50%;
+        transform: translate(-50%, -50%); /* Center the popup both vertically and horizontally */
+        width: 200px; /* Fixed width */
+        height: 100px; /* Fixed height */
+        font-size: 14px; /* Slightly increased font size */
+        padding: 12px; /* Increased padding for more space around the content */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Added a subtle shadow */
+    }
+
+
+    .popup:hover .popup-content {
+        visibility: visible;
+    }
+
+    .popup-content p {
+        margin: 5px 0; /* Adjust margin for better appearance */
+    }
+
+    .progress-bar {
+        width: 100%;
+        height: 10px;
+        background-color: #f2f2f2; /* Light gray background color */
+        border-radius: 5px; /* Rounded corners */
+        overflow: hidden; /* Hide any overflow */
+    }
+
+    .progress {
+        height: 100%;
+        background-color: #007bff; /* Blue color for the progress bar */
+    }
 </style>
 {% endblock %}
 
@@ -112,14 +159,36 @@
             <a href="/login/">Inicia Sesion</a>
         {% endif %}
     </div>
-    <p>{{ user.username }}</p>
+    <p><a href="/">{{ user.username }}</a></p>
 </div>
 
 <div class="container">
-    <h1>Eventos</h1>
+    <h1>Proyectos</h1>
     {% for project in projects %}
         <div class="projects-container">
-            <h2><a href="{% url 'project_details' project.id %}">{{ project.name }}</a></h2>
+            <!-- Add a class to the project name link to trigger the popup -->
+            <div class="popup" data-projectId="{{ project.id }}" data-project-length="{{ project.step_set.all|length }}">
+                <h2><a href="{% url 'project_details' project.id %}">{{ project.name }}</a></h2>
+                <div class="popup-content">
+                    <!-- Popup content (project description) -->
+                    
+                    <p>Tareas Realizadas <span id="steps-done-{{ project.id }}"></span> de {{ project.step_set.all|length }}</p>
+                    <div class="progress-bar">
+                        <div id="progress-{{ project.id }}" class="progress" ></div>
+                    </div>
+                    <p id="percentage-{{ project.id }}"></p>
+                    <div id="step_done_{{ project.id }}">
+                    {% for step in project.step_set.all %}
+                   
+                        {% if  step.is_done == True %}
+                        <p></p>
+                        {% endif %}
+
+                    {% endfor %}
+                    </div>
+                
+                </div>
+            </div>
             <p>{{ project.description }}</p>
             <p>Fecha de Finalizacion: {{ project.due_date }}</p>
             <ul>
@@ -127,4 +196,38 @@
         </div>
     {% endfor %}
 </div>
+
+<script>
+
+    
+    // JavaScript code to handle the popup functionality
+
+        // Get the reference to the div element
+        document.querySelectorAll('.popup').forEach((popup) => {
+            const projectId = popup.dataset.projectid;
+            const projectLength = popup.dataset.projectLength;
+            const stepsDoneSpan = popup.querySelector('#steps-done-' + projectId);
+            const stepDiv = document.querySelector('#step_done_' + projectId);
+            const paragraphs = stepDiv.querySelectorAll('p');
+            stepsDoneSpan.textContent = paragraphs.length.toString();
+            const progressBar = popup.querySelector('#progress-' + projectId);
+            progressBar.style.width = `${( paragraphs.length / projectLength) * 100}%`;
+            const percentage = (paragraphs.length / projectLength) * 100;
+            // Update the content of the percentage paragraph element
+            const percentageParagraph = popup.querySelector('#percentage-' + projectId);
+            percentageParagraph.textContent = `${percentage.toFixed(2)}%`;
+        });
+        // Get the number of p tags
+    document.querySelectorAll('.popup').forEach((popup) => {
+        popup.addEventListener('mouseover', () => {
+            const popupContent = popup.querySelector('.popup-content');
+            popupContent.style.visibility = 'visible';
+        });
+
+        popup.addEventListener('mouseout', () => {
+            const popupContent = popup.querySelector('.popup-content');
+            popupContent.style.visibility = 'hidden';
+        });
+    });
+</script>
 {% endblock %}
