@@ -84,6 +84,16 @@ AUTH_USER_MODEL = "home.MyUser"
 # db_from_env = dj_database_url.config(conn_max_age=500)
 # DATABASES["default"].update(db_from_env)
 
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": "railway",
+        "USER": "root",
+        "PASSWORD": "kTO7dnPxPnpqIE1GL6Hq",
+        "HOST": "containers-us-west-89.railway.app",
+        "PORT": "7007",
+    }
+}
 
 DATABASES = {
     "default": {
