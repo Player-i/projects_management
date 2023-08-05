@@ -8,6 +8,7 @@ django = "*"
 gunicorn = "*"
 django-heroku = "*"
 psycopg2-binary = "*"
+mysqlclient = "*"
 
 [dev-packages]
 
