@@ -80,6 +80,10 @@ AUTH_USER_MODEL = "home.MyUser"
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+# RAILWAY
+# db_from_env = dj_database_url.config(conn_max_age=500)
+# DATABASES["default"].update(db_from_env)
+
 
 DATABASES = {
     "default": {
@@ -87,10 +91,6 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
-
-# RAILWAY
-# db_from_env = dj_database_url.config(conn_max_age=500)
-# DATABASES["default"].update(db_from_env)
 
 
 # Password validation
@@ -132,7 +132,7 @@ STATIC_URL = "static/"
 
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
-django_heroku.settings(locals())
+# django_heroku.settings(locals())
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
