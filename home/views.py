@@ -108,6 +108,7 @@ def logout_view(request):
 
 
 def step_details(request, step_id):
+    user = request.user
     context = {}
 
     step = get_object_or_404(Step, id=step_id)
@@ -126,7 +127,7 @@ def step_details(request, step_id):
                 step_done_form.save()
                 # Redirect to the project_details page with the project_id in the URL
                 return redirect("project_details", project_id=project_id)
-
+    context["user"] = user
     context["step"] = step
     context["step_done_form"] = step_done_form
     context["project_id"] = project_id  # Pass the project ID to the template

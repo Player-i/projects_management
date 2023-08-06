@@ -17,13 +17,21 @@
         <!-- Step Done Form -->
         <form method="post">
             {% csrf_token %}
-            {{ step_done_form.as_p }}
+            <div class="step-done-form">
+                <!-- Customize the form fields and labels as needed -->
+                <label for="{{ step_done_form.is_done.id_for_label }}">Tarea Completada</label>
+                {{ step_done_form.is_done }}
+            </div>
+
+            <!-- Customize any additional fields in the form -->
 
             <!-- Buttons div to hold both buttons -->
             <div class="buttons-div">
                 <input type="submit" name="step_done_form" value="Ya esta hecho?" class="btn btn-primary">
                 <a href="{% url 'home' %}" class="btn btn-secondary">Todo tus proyectos</a>
+                {% if user.is_project_manager %}
                 <a href="{% url 'edit_step' step.id %}" class="btn btn-secondary">Edita Tarea</a>
+                {% endif %}
             </div>
         </form>
     </div>
