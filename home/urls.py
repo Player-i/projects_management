@@ -32,4 +32,7 @@ urlpatterns = [
     path(
         "delete_project/<int:project_id>/", views.delete_project, name="delete_project"
     ),
+    path(
+        "duplicate/<int:project_id>/", views.duplicate_project, name="duplicate_project"
+    ),
 ]

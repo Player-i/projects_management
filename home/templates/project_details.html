@@ -76,6 +76,19 @@
     .delete-button {
         display: inline-block;
         margin-top: 20px; /* Add top margin for spacing */
+        background-color: #FF004F;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+
+    .duplicate-button {
+        display: inline-block;
+        margin-top: 20px; /* Add top margin for spacing */
         background-color: #fd5c63;
         color: #fff;
         border: none;
@@ -99,6 +112,7 @@
         {% if user.is_project_manager %}
         <a href="{% url 'edit_project' project.id %}" class="back-button">Editar Proyecto</a>
         <a href="{% url 'delete_project' project.id %}" class="delete-button">Borrar Proyecto</a>
+        <a href="{% url 'duplicate_project' project.id %}" class="duplicate-button">Duplicar Proyecto</a>
         {% endif %}
     </div>
     <div class="project-steps">

@@ -290,3 +290,31 @@ def delete_project(request, project_id):
         return redirect("home")
 
     return render(request, "delete_project.html", context)
+
+
+def duplicate_project(request, project_id):
+    # Get the original project instance
+    original_project = Project.objects.get(id=project_id)
+
+    # Duplicate the project by creating a new instance
+    new_project = Project.objects.create(
+        name=f"{original_project.name} (Copy)",
+        author=request.user,
+        description=original_project.description,
+        due_date=original_project.due_date,
+        # Add any other fields you want to duplicate here
+    )
+
+    # Duplicate project steps
+    for step in original_project.step_set.all():
+        Step.objects.create(
+            project=new_project,
+            name=step.name,
+            description=step.description,
+            due_date=step.due_date,
+            assigned_to=step.assigned_to,
+            # Add any other fields you want to duplicate here
+        )
+
+    # Redirect the user to the newly duplicated project's details page
+    return redirect("project_details", new_project.id)
