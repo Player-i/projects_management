@@ -99,7 +99,7 @@ DATABASES = {
     }
 }
 
-CSRF_TRUSTED_ORIGINS = ["https://projectsmanagement-production.up.railway.app"]
+CSRF_TRUSTED_ORIGINS = ["https://bouarry.co"]
 
 
 # Password validation
