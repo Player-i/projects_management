@@ -99,7 +99,7 @@ DATABASES = {
     }
 }
 
-CSRF_TRUSTED_ORIGINS = ["https://wwww.bouarry.co"]
+CSRF_TRUSTED_ORIGINS = ["https://www.bouarry.co"]
 
 
 # Password validation
