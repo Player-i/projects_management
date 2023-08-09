@@ -58,6 +58,7 @@ def create_users(request):
             )
             new_user.set_password(form.cleaned_data["password1"])
             new_user.save()  # Redirect to the same page after user creation
+            return redirect("home")
     else:
         form = ManagerCreatesUserForm()
     # Fetch non-project manager users
