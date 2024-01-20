@@ -4,11 +4,11 @@
 <div class="navbar">
     <div>
         {% if user.is_authenticated %}
-            <a href="/logout/">Cerrar Sesion</a>
-            <a href="/create/">Nuevo Proyecto</a>
-            <a href="/create_users/">Crea Ayudante</a>
+            <a href="/logout/">Logout</a>
+            <a href="/create/">New Project</a>
+            <a href="/create_users/">Create a worker</a>
         {% else %}
-            <a href="/login/">Inicia Sesion</a>
+            <a href="/login/">Login</a>
         {% endif %}
     </div>
     <a href="/"><p>{{ user.username }}</p></a>
@@ -19,7 +19,7 @@
     <form method="post"  enctype="multipart/form-data" >
         {% csrf_token %}
         <p>
-            <label for="id_name">Nombre del proyecto:</label>
+            <label for="id_name">Customer name, address and contact</label>
             <input type="text" name="name" maxlength="100" value="{{ project.name}}" required id="id_name">
             
             
@@ -27,7 +27,7 @@
         
           
           <p>
-            <label for="id_description">Descripcion:</label>
+            <label for="id_description">Description of work needed</label>
             <textarea name="description" cols="40" rows="10"  required id="id_description">{{ project.description}} 
         </textarea>
             
@@ -36,8 +36,8 @@
         
           
           <p>
-            <label for="id_due_date">Fecha del Proyecto</label>
-            <input type="date" name="due_date" value="{{ project.due_date|date:'Y-m-d' }}" required id="id_due_date">
+            <label for="id_todays_date">Today's Date</label>
+            <input type="date" name="todays_date" value="{{ project.todays_date|date:'Y-m-d' }}" required id="id_todays_date">
             
             
               
@@ -45,38 +45,50 @@
           </p>
 
         <input type="hidden" name="steps-TOTAL_FORMS" value="1" id="id_steps-TOTAL_FORMS"><input type="hidden" name="steps-INITIAL_FORMS" value="0" id="id_steps-INITIAL_FORMS"><input type="hidden" name="steps-MIN_NUM_FORMS" value="1" id="id_steps-MIN_NUM_FORMS"><input type="hidden" name="steps-MAX_NUM_FORMS" value="1000" id="id_steps-MAX_NUM_FORMS">
-        <h3>Tareas</h3>
+        <h3>Assignments</h3>
         <div id="existing-steps">
             {% for step in steps %}
             <div class="form-group">
-                <label for="id_steps-{{ forloop.counter0 }}-name">Nombre de la tarea</label>
+                <label for="id_steps-{{ forloop.counter0 }}-name">Name of the Assignment</label>
                 <input type="text" name="steps-{{ forloop.counter0 }}-name" value="{{ step.name }}" required>
             </div>
             {% if step.file %}
             <div class="form-group">
                 
-                <a href="{{ step.file.url }}" target="_blank"><label>Archivo Adjunto:</label></a>
+                <a href="{{ step.file.url }}" target="_blank"><label>Picture of work:</label></a>
+            </div>
+            {% endif %}
+
+            {% if step.sign_sheet %}
+            <div class="form-group">
+                
+                <a href="{{ step.sign_sheet.url }}" target="_blank"><label>Sign job sheet:</label></a>
             </div>
             {% endif %}
 
             <!-- Add the file input field to change the file -->
             <div class="form-group">
-                <label for="id_steps-{{ forloop.counter0 }}-file">Archivo Adjunto (Dejar en blanco para mantener archivo)</label>
+                <label for="id_steps-{{ forloop.counter0 }}-file">Picture (Leave in blank to keep current pic)</label>
                 <input type="file" name="steps-{{ forloop.counter0 }}-file" accept="image/*, .pdf, .doc, .docx">
+            </div>
+
+            <div class="form-group">
+                <label for="id_steps-{{ forloop.counter0 }}-sign_sheet">Sign job sheet (Leave in blank to keep current pic)</label>
+                <input type="file" name="steps-{{ forloop.counter0 }}-sign_sheet" accept="image/*, .pdf, .doc, .docx">
             </div>
     
             <div class="form-group">
-                <label for="id_steps-{{ forloop.counter0 }}-description">Descripcion</label>
+                <label for="id_steps-{{ forloop.counter0 }}-description">Any guidelines related</label>
                 <textarea name="steps-{{ forloop.counter0 }}-description" rows="4" required>{{ step.description }}</textarea>
             </div>
             <div class="form-group">
-                <label for="id_steps-{{ forloop.counter0 }}-due_date">Fecha de Finalizacion</label>
-                <input type="date" name="steps-{{ forloop.counter0 }}-due_date" value="{{ step.due_date|date:'Y-m-d' }}" required>
+                <label for="id_steps-{{ forloop.counter0 }}-todays_date">Today's Date</label>
+                <input type="date" name="steps-{{ forloop.counter0 }}-todays_date" value="{{ step.todays_date|date:'Y-m-d' }}" required>
             </div>
             <div class="form-group">
-                <label for="id_steps-{{ forloop.counter0 }}-assigned_to">Asignado a:</label>
+                <label for="id_steps-{{ forloop.counter0 }}-assigned_to">Assign to:</label>
                 <select name="steps-{{ forloop.counter0 }}-assigned_to">
-                    <option value="" disabled>Elige una persona</option>
+                    <option value="" disabled>Choose a worker</option>
                     {% for user in users %}
                         <option value="{{ user.username }}" {% if step.assigned_to == user.username %}selected{% endif %}>{{ user.username }}</option>
                     {% endfor %}
@@ -85,9 +97,9 @@
             {% endfor %}
         </div>
 
-        <button type="button" id="add-step-btn" class="btn btn-primary">Añade una tarea</button>
+        <button type="button" id="add-step-btn" class="btn btn-primary">Add an assignment</button>
 
-        <input type="submit" value="Guardar Cambios" class="btn btn-primary">
+        <input type="submit" value="Save changes" class="btn btn-primary">
     </form>
 </div>
 
@@ -121,29 +133,34 @@
 
 <div id="empty-form" style="display:none;">
     <div class="form-group">
-        <label for="id_steps-__prefix__-name">Nombre de la  tarea</label>
+        <label for="id_steps-__prefix__-name">Assignment Name</label>
         <input type="text" name="steps-__prefix__-name" maxlength="100" id="id_steps-__prefix__-name" class="form-control">
     </div>
 
     <div class="form-group">
-        <label for="id_steps-__prefix__-file">Archivo Adjunto:</label>
+        <label for="id_steps-__prefix__-file">Pictures of work:</label>
         <input type="file" name="steps-__prefix__-file" id="id_steps-__prefix__-file" class="form-control">
     </div>
 
     <div class="form-group">
-        <label for="id_steps-__prefix__-description">Descripcion</label>
+        <label for="id_steps-__prefix__-sign_sheet">Sign job sheet:</label>
+        <input type="file" name="steps-__prefix__-sign_sheet" id="id_steps-__prefix__-sign_sheet" class="form-control">
+    </div>
+
+    <div class="form-group">
+        <label for="id_steps-__prefix__-description">Any guidelines related</label>
         <textarea name="steps-__prefix__-description" cols="40" rows="10" id="id_steps-__prefix__-description" class="form-control"></textarea>
     </div>
 
     <div class="form-group">
-        <label for="id_steps-__prefix__-due_date">Fecha de Finalizacion</label>
-        <input type="date" name="steps-__prefix__-due_date" id="id_steps-__prefix__-due_date" class="form-control">
+        <label for="id_steps-__prefix__-todays_date">Today's Date</label>
+        <input type="date" name="steps-__prefix__-todays_date" id="id_steps-__prefix__-todays_date" class="form-control">
     </div>
 
     <div class="form-group">
-        <label for="id_steps-__prefix__-assigned_to">Asignado a:</label>
+        <label for="id_steps-__prefix__-assigned_to">Assign to:</label>
         <select name="steps-__prefix__-assigned_to" id="steps-__prefix__-assigned_to" class="form-control">
-            <option value="" selected disabled>Elige una persona</option>
+            <option value="" selected disabled>Choose a worker</option>
             {% for user in users %}
             <option value="{{ user.username }}">{{ user.username }}</option>
             {% endfor %}

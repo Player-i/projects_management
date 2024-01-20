@@ -70,7 +70,7 @@
     <form method="post">
         {% csrf_token %}
         
-        <h2>Inicia Sesion</h2>
+        <h2>Login </h2>
         
         <div class="form-group">
             <label for="{{ form.username.id_for_label }}">Email:</label>
@@ -78,14 +78,14 @@
         </div>
         
         <div class="form-group">
-            <label for="{{ form.password.id_for_label }}">Contraseña:</label>
+            <label for="{{ form.password.id_for_label }}">Password:</label>
             {{ form.password }}
         </div>
         
-        <button type="submit" class="btn-login">Accede</button>
+        <button type="submit" class="btn-login">Login</button>
         
         <div class="register-link">
-            No tienes una cuenta? <a href="/register/" class="purple-link">Registrate</a>
+            No account? <a href="/register/" class="purple-link">Sign up</a>
         </div>
     </form>
 </div>

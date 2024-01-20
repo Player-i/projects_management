@@ -4,24 +4,24 @@
 <div class="navbar" style="background-color: #333; color: #fff;">
     <div>
         {% if user.is_authenticated %}
-            <a href="/logout/">Cerrar Sesion</a>
-            <a href="/create/">Nuevo Proyecto</a>
-            <a href="/create_users/">Crea Ayudante</a>
+            <a href="/logout/">Logout</a>
+            <a href="/create/">New Project</a>
+            <a href="/create_users/">Create Worker</a>
         {% else %}
-            <a href="/login/">Inicia Sesion</a>
+            <a href="/login/">Login</a>
         {% endif %}
     </div>
     <a href="/"><p>{{ user.username }}</p></a>
 </div>
 
 <div class="container edit-step-container" style="background-color: #f2f2f2;">
-    <h1>Edita Tarea</h1>
+    <h1>Edit Assignment </h1>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         
         <!-- Customize each form field as needed -->
         <div class="form-group">
-            <label for="{{ form.name.id_for_label }}">Nombre de la Tarea:</label>
+            <label for="{{ form.name.id_for_label }}">Assignment Name:</label>
             <input type="text" name="{{ form.name.name }}" maxlength="100" required id="{{ form.name.auto_id }}" class="form-control" value="{{ form.name.value }}">
             {% if form.name.errors %}
                 <ul class="errorlist">
@@ -33,7 +33,7 @@
         </div>
 
         <div class="form-group">
-            <label for="{{ form.file.id_for_label }}">Archivo:</label>
+            <label for="{{ form.file.id_for_label }}">Pictures of work:</label>
             <input type="file" name="{{ form.file.name }}" id="{{ form.file.auto_id }}" class="form-control">
             {% if form.file.errors %}
                 <ul class="errorlist">
@@ -44,14 +44,32 @@
             {% endif %}
             {% if step.file %}
                 <div class="current-file">
-                    <label>Archivo Subido:</label>
-                    <a href="{{ step.file.url }}" target="_blank">Ver Archivo</a>
+                    <label>Picture:</label>
+                    <a href="{{ step.file.url }}" target="_blank">See Picture</a>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.sign_sheet.id_for_label }}">Sign job sheet:</label>
+            <input type="file" name="{{ form.sign_sheet.name }}" id="{{ form.sign_sheet.auto_id }}" class="form-control">
+            {% if form.sign_sheet.errors %}
+                <ul class="errorlist">
+                    {% for error in form.sign_sheet.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            {% if step.sign_sheet %}
+                <div class="current-file">
+                    <label>Sign job sheet:</label>
+                    <a href="{{ step.sign_sheet.url }}" target="_blank">See sign job sheet</a>
                 </div>
             {% endif %}
         </div>
         
         <div class="form-group">
-            <label for="{{ form.description.id_for_label }}">Descripcion</label>
+            <label for="{{ form.description.id_for_label }}">Any guidelines related</label>
             <textarea name="{{ form.description.name }}" rows="4" required id="{{ form.description.auto_id }}" class="form-control">{{ form.description.value }}</textarea>
             {% if form.description.errors %}
                 <ul class="errorlist">
@@ -63,11 +81,11 @@
         </div>
         
         <div class="form-group">
-            <label for="{{ form.due_date.id_for_label }}">Fecha de Finalizacion</label>
-            <input type="date" name="{{ form.due_date.name }}" required id="{{ form.due_date.auto_id }}" class="form-control" value="{{ form.due_date.value|date:'Y-m-d' }}">
-            {% if form.due_date.errors %}
+            <label for="{{ form.todays_date.id_for_label }}">Today's Date</label>
+            <input type="date" name="{{ form.todays_date.name }}" required id="{{ form.todays_date.auto_id }}" class="form-control" value="{{ form.todays_date.value|date:'Y-m-d' }}">
+            {% if form.todays_date.errors %}
                 <ul class="errorlist">
-                    {% for error in form.due_date.errors %}
+                    {% for error in form.todays_date.errors %}
                         <li>{{ error }}</li>
                     {% endfor %}
                 </ul>
@@ -75,9 +93,9 @@
         </div>
         
         <div class="form-group">
-            <label for="{{ form.assigned_to.id_for_label }}">Asignado a:</label>
+            <label for="{{ form.assigned_to.id_for_label }}">Assign to:</label>
             <select name="{{ form.assigned_to.name }}" id="{{ form.assigned_to.auto_id }}" class="form-control">
-                <option value="" selected disabled>Elige una persona</option>
+                <option value="" selected disabled>Choose a worker</option>
                 {% for user in users %}
                     <option value="{{ user.username }}" {% if step.assigned_to == user.username %}selected{% endif %}>{{ user.username }}</option>
                 {% endfor %}
@@ -91,7 +109,7 @@
             {% endif %}
         </div>
         
-        <input type="submit" value="Guardar Cambios" class="btn btn-primary" style="background-color: #8a00b8; color: #fff;">
+        <input type="submit" value="Save changes" class="btn btn-primary" style="background-color: #8a00b8; color: #fff;">
     </form>
 </div>
 

@@ -2,12 +2,13 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from .models import MyUser, Step, Project
 from django.contrib.auth import authenticate
+from datetime import date
 
 
 class ProjectForm(forms.ModelForm):
     class Meta:
         model = Project
-        fields = ["name", "description", "due_date"]
+        fields = ["name", "description", "todays_date"]
 
 
 class StepForm(forms.ModelForm):
@@ -15,8 +16,8 @@ class StepForm(forms.ModelForm):
 
     class Meta:
         model = Step
-        fields = ["name", "description", "due_date", "file"]
-        widgets = {"due_date": forms.DateInput(attrs={"type": "date"})}
+        fields = ["name", "description", "todays_date", "file", "sign_sheet"]
+        widgets = {"todays_date": forms.DateInput(attrs={"type": "date"})}
 
 
 class StepDoneForm(forms.ModelForm):

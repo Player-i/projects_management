@@ -113,7 +113,7 @@
         position: absolute;
         z-index: 1;
         top: 50%; /* Updated: Center the popup vertically */
-        left: 180%;
+        left: 100%;
         transform: translate(-50%, -50%); /* Center the popup both vertically and horizontally */
         width: 200px; /* Fixed width */
         height: 100px; /* Fixed height */
@@ -150,20 +150,20 @@
 <div class="navbar">
     <div>
         {% if user.is_authenticated %}
-            <a href="/logout/">Cerrar Sesion</a>
+            <a href="/logout/">Logout</a>
             {% if user.is_project_manager %}
-            <a href="/create/">Nuevo Proyecto</a>
-            <a href="/create_users/">Crea Ayudante</a>
+            <a href="/create/">New Project</a>
+            <a href="/create_users/">Create Worker</a>
             {% endif %}
         {% else %}
-            <a href="/login/">Inicia Sesion</a>
+            <a href="/login/">Login</a>
         {% endif %}
     </div>
     <p><a href="/">{{ user.username }}</a></p>
 </div>
 
 <div class="container">
-    <h1>Proyectos</h1>
+    <h1>Projects</h1>
     {% for project in projects %}
         <div class="projects-container">
             <!-- Add a class to the project name link to trigger the popup -->
@@ -172,7 +172,7 @@
                 <div class="popup-content">
                     <!-- Popup content (project description) -->
                     
-                    <p>Tareas Realizadas <span id="steps-done-{{ project.id }}"></span> de {{ project.step_set.all|length }}</p>
+                    <p>Assignments Done <span id="steps-done-{{ project.id }}"></span> de {{ project.step_set.all|length }}</p>
                     <div class="progress-bar">
                         <div id="progress-{{ project.id }}" class="progress" ></div>
                     </div>
@@ -190,7 +190,7 @@
                 </div>
             </div>
             <p>{{ project.description }}</p>
-            <p>Fecha de Finalizacion: {{ project.due_date }}</p>
+            {% comment %} <p>Today's Date: {{ project.todays_date }}</p> {% endcomment %}
             <ul>
             </ul>
         </div>

@@ -312,7 +312,7 @@ def duplicate_project(request, project_id):
             project=new_project,
             name=step.name,
             description=step.description,
-            due_date=step.due_date,
+            todays_date=step.todays_date,
             assigned_to=step.assigned_to,
             # Add any other fields you want to duplicate here
         )

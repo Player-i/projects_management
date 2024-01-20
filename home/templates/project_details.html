@@ -52,7 +52,7 @@
         font-weight: bold;
     }
 
-    .step-due-date {
+    .step-todays-date {
         color: #666;
     }
 
@@ -106,40 +106,40 @@
     <div class="project-info">
         <h1 class="project-name">{{ project.name }}</h1>
         <p class="project-description">{{ project.description }}</p>
-        <p>Fecha de Finalizacion: {{ project.due_date }}</p>
+        {% comment %} <p>Today's Date: {{ project.todays_date }}</p> {% endcomment %}
         <!-- Add the back button to go back to the home page -->
-        <a href="{% url 'home' %}" class="back-button">Todos los Proyectos</a>
+        <a href="{% url 'home' %}" class="back-button">All the projects</a>
         {% if user.is_project_manager %}
-        <a href="{% url 'edit_project' project.id %}" class="back-button">Editar Proyecto</a>
-        <a href="{% url 'delete_project' project.id %}" class="delete-button">Borrar Proyecto</a>
-        <a href="{% url 'duplicate_project' project.id %}" class="duplicate-button">Duplicar Proyecto</a>
+        <a href="{% url 'edit_project' project.id %}" class="back-button">Edit Project</a>
+        <a href="{% url 'delete_project' project.id %}" class="delete-button">Delete Project</a>
+        <a href="{% url 'duplicate_project' project.id %}" class="duplicate-button">Duplicate Project</a>
         {% endif %}
     </div>
     <div class="project-steps">
         {% if user.is_project_manager %}
-            <h3>Tareas del Proyecto</h3>
+            <h3>Project Assignments</h3>
         {% else %}
-            <h3>Tareas a realizar</h3>
+            <h3>Assignments to do</h3>
         {% endif %}
         {% for step in project.step_set.all %}
             {% if user.is_project_manager %}
                 <div class="step-container">
                     <p class="step-name">{{ step.name }}</p>
-                    <p class="step-due-date">Fecha de Finalizacion: {{ step.due_date }}</p>
+                    <p class="step-todays-date">Today's Date: {{ step.todays_date }}</p>
                     {% if user.is_project_manager %}
-                        <p>Asignado a {{ step.assigned_to }}</p>
+                        <p>Assign to {{ step.assigned_to }}</p>
                     {% endif %}
-                    <p><a class="step-details-link" href="{% url 'step_details' step.id %}">Mas detalles</a></p>
+                    <p><a class="step-details-link" href="{% url 'step_details' step.id %}">More details</a></p>
                 </div>
 
             {% elif step.assigned_to == user.username %}
             <div class="step-container">
                 <p class="step-name">{{ step.name }}</p>
-                <p class="step-due-date">Fecha de Finalizacion: {{ step.due_date }}</p>
+                <p class="step-todays-date">Today's Date: {{ step.todays_date }}</p>
                 {% if user.is_project_manager %}
-                    <p>Asignado a {{ step.assigned_to }}</p>
+                    <p>Assign to {{ step.assigned_to }}</p>
                 {% endif %}
-                <p><a class="step-details-link" href="{% url 'step_details' step.id %}">Mas detalles</a></p>
+                <p><a class="step-details-link" href="{% url 'step_details' step.id %}">More details</a></p>
             </div>
             {% endif %}
         {% endfor %}

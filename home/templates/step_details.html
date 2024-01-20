@@ -4,13 +4,16 @@
 
 <div class="container step-details-container">
     <div id="step_details">
-        <h1>Detalles del paso:</h1>
+        <h1>Assignment Details:</h1>
         <h2>{{ step.name }}</h2>
-        <p>Descripcion del paso: {{ step.description }}</p>
-        <p>Fecha de Finalizacion {{ step.due_date }}</p>
-        <p>Asignado a: {{ step.assigned_to }}</p>
+        <p>Any guidelines related: {{ step.description }}</p>
+        <p>Today's Date {{ step.todays_date }}</p>
+        <p>Assign to: {{ step.assigned_to }}</p>
         {% if step.file %}
-        <p><a href="{{ step.file.url }}"  target="_blank">Ver Archivo Subido</a></p>
+        <p><a href="{{ step.file.url }}"  target="_blank">See picture of work</a></p>
+        {% endif %}
+        {% if step.sign_sheet %}
+        <p><a href="{{ step.sign_sheet.url }}"  target="_blank">See sign job sheet</a></p>
         {% endif %}
         <!-- Add any other step details you want to display -->
 
@@ -19,7 +22,7 @@
             {% csrf_token %}
             <div class="step-done-form">
                 <!-- Customize the form fields and labels as needed -->
-                <label for="{{ step_done_form.is_done.id_for_label }}">Tarea Completada</label>
+                <label for="{{ step_done_form.is_done.id_for_label }}">Assignment Completed</label>
                 {{ step_done_form.is_done }}
             </div>
 
@@ -27,10 +30,10 @@
 
             <!-- Buttons div to hold both buttons -->
             <div class="buttons-div">
-                <input type="submit" name="step_done_form" value="Ya esta hecho?" class="btn btn-primary">
-                <a href="{% url 'home' %}" class="btn btn-secondary">Todo tus proyectos</a>
+                <input type="submit" name="step_done_form" value="Is it done?" class="btn btn-primary">
+                <a href="{% url 'home' %}" class="btn btn-secondary">All your projects</a>
                 {% if user.is_project_manager %}
-                <a href="{% url 'edit_step' step.id %}" class="btn btn-secondary">Edita Tarea</a>
+                <a href="{% url 'edit_step' step.id %}" class="btn btn-secondary">Edit Assignment</a>
                 {% endif %}
             </div>
         </form>

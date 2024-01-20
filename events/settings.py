@@ -80,26 +80,26 @@ AUTH_USER_MODEL = "home.MyUser"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
-#     }
-# }
-# RAILWAY
-
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": "railway",
-        "USER": "root",
-        "PASSWORD": "kTO7dnPxPnpqIE1GL6Hq",
-        "HOST": "containers-us-west-89.railway.app",
-        "PORT": "7007",
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
+# RAILWAY
 
-CSRF_TRUSTED_ORIGINS = ["https://www.bouarry.co"]
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.mysql",
+#         "NAME": "railway",
+#         "USER": "root",
+#         "PASSWORD": "kTO7dnPxPnpqIE1GL6Hq",
+#         "HOST": "containers-us-west-89.railway.app",
+#         "PORT": "7007",
+#     }
+# }
+
+# CSRF_TRUSTED_ORIGINS = ["https://www.bouarry.co"]
 
 
 # Password validation

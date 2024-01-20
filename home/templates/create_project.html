@@ -5,22 +5,22 @@
 <div class="navbar">
     <div>
         {% if user.is_authenticated %}
-            <a href="/logout/">Cerrar Sesion</a>
-            <a href="/create/">Nuevo Proyecto</a>
-            <a href="/create_users/">Crea Ayudante</a>
+            <a href="/logout/">Logout</a>
+            <a href="/create/">New Project</a>
+            <a href="/create_users/">Create Worker</a>
         {% else %}
-            <a href="/login/">Inicia Sesion</a>
+            <a href="/login/">Login</a>
         {% endif %}
     </div>
     <a href="/"><p>{{ user.username }}</p></a>
 </div>
 
 <div class="container register-form-container" style="background-color: #333; color: #fff;">
-    <h3>Proyecto</h3>
+    <h3>Project</h3>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
                 <p>
-            <label for="id_name">Nombre del proyecto:</label>
+            <label for="id_name">Customer name, address and contact</label>
             <input type="text" name="name" maxlength="100" required id="id_name">
             
             
@@ -28,7 +28,7 @@
         
           
           <p>
-            <label for="id_description">Descripcion:</label>
+            <label for="id_description">Description of work needed</label>
             <textarea name="description" cols="40" rows="10" required id="id_description">
         </textarea>
             
@@ -37,43 +37,48 @@
         
           
           <p>
-            <label for="id_due_date">Fecha del Proyecto</label>
-            <input type="date" name="due_date" required id="id_due_date">
+            <label for="id_todays_date">Today's Date</label>
+            <input type="date" name="todays_date" required id="id_todays_date">
             
             
               
             
           </p>
 
-        <h3>Tareas</h3>
+        <h3>Assignments</h3>
         <div id="step-forms">
             {{ formset.management_form }}
 
             {% for form in formset %}
             <div class="form-group">
-                <label for="{{ form.name.id_for_label }}">Nombre de la tarea</label>
+                <label for="{{ form.name.id_for_label }}">Assignment Name:</label>
                 {{ form.name }}
             </div>
 
             <div class="form-group">
-                <label for="{{ form.file.id_for_label }}">Archivo Adjunto:</label>
+                <label for="{{ form.file.id_for_label }}">Pictures of work:</label>
                 {{ form.file }}
             </div>
 
             <div class="form-group">
-                <label for="{{ form.description.id_for_label }}">Descripcion</label>
+                <label for="{{ form.sign_sheet.id_for_label }}">Signed job sheet:</label>
+                {{ form.file }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.description.id_for_label }}">Any guidelines related</label>
                 {{ form.description }}
             </div>
             <div class="form-group">
-                <label for="{{ form.due_date.id_for_label }}">Fecha de Finalizacion</label>
-                {{ form.due_date }}
+                <label for="{{ form.todays_date.id_for_label }}">Today's Date</label>
+                {{ form.todays_date }}
             </div>
 
             <!-- Change the input field to a select element for "Assigned To" field -->
             <div class="form-group">
-                <label for="{{ form.prefix }}-assigned_to">Asignado a:</label>
+                <label for="{{ form.prefix }}-assigned_to">Assign to:</label>
                 <select name="{{ form.prefix }}-assigned_to" id="{{ form.prefix }}-assigned_to" class="form-control">
-                    <option value="" selected disabled>Elige una persona</option>
+                    <option value="" selected disabled>Choose a worker</option>
                     {% for user in users %}
                     <option value="{{ user.username }}">{{ user.username }}</option>
                     {% endfor %}
@@ -82,7 +87,7 @@
             {% endfor %}
         </div>
 
-        <button type="button" id="add-step-btn" class="btn btn-primary">Añade una tarea</button>
+        <button type="button" id="add-step-btn" class="btn btn-primary">Add an assignment</button>
         <input type="submit" value="Crear Proyecto" class="btn btn-primary">
     </form>
 </div>
@@ -105,6 +110,23 @@
             select.name = select.name.replace(/__prefix__/g, formIdx);
         });
         document.getElementById("step-forms").appendChild(emptyFormEl);
+        // Get today's date
+        var today = new Date();
+    
+        // Format the date to be used in the input fields
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
+        var yyyy = today.getFullYear();
+    
+        today = yyyy + '-' + mm + '-' + dd;
+    
+        // Find all input elements with ID containing "due_date"
+        var todaysDateInputs = document.querySelectorAll('input[id*="todays_date"]');
+    
+        // Set the default value for each found element
+        todaysDateInputs.forEach(function(input) {
+        input.value = today;
+        });
     }
 
     // Add step button click event
@@ -114,31 +136,56 @@
         $('#id_steps-TOTAL_FORMS').val(formIdx);
     }
 </script>
+<script>
+    // Get today's date
+    var today = new Date();
+  
+    // Format the date to be used in the input fields
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
+    var yyyy = today.getFullYear();
+  
+    today = yyyy + '-' + mm + '-' + dd;
+  
+    // Find all input elements with ID containing "due_date"
+    var todaysDateInputs = document.querySelectorAll('input[id*="todays_date"]');
+  
+    // Set the default value for each found element
+    todaysDateInputs.forEach(function(input) {
+      input.value = today;
+    });
+  </script>
 
 <div id="empty-form" style="display:none;">
     <div class="form-group">
-        <label for="id_steps-__prefix__-name">Nombre de la  tarea</label>
+        <label for="id_steps-__prefix__-name">Assignment Name:</label>
         <input type="text" name="steps-__prefix__-name" maxlength="100" id="id_steps-__prefix__-name" class="form-control">
     </div>
 
     <div class="form-group">
-        <label for="id_steps-__prefix__-file">Archivo Adjunto:</label>
+        <label for="id_steps-__prefix__-file">Pictures of work:</label>
         <input type="file" name="steps-__prefix__-file" id="id_steps-__prefix__-file" class="form-control">
     </div>
+
     <div class="form-group">
-        <label for="id_steps-__prefix__-description">Descripcion</label>
+        <label for="id_steps-__prefix__-sign_sheet">Sign job sheet:</label>
+        <input type="file" name="steps-__prefix__-sign_sheet" id="id_steps-__prefix__-sign_sheet" class="form-control">
+    </div>
+
+    <div class="form-group">
+        <label for="id_steps-__prefix__-description">Any guidelines related</label>
         <textarea name="steps-__prefix__-description" cols="40" rows="10" id="id_steps-__prefix__-description" class="form-control"></textarea>
     </div>
 
     <div class="form-group">
-        <label for="id_steps-__prefix__-due_date">Fecha de Finalizacion</label>
-        <input type="date" name="steps-__prefix__-due_date" id="id_steps-__prefix__-due_date" class="form-control">
+        <label for="id_steps-__prefix__-todays_date">Today's Date</label>
+        <input type="date" name="steps-__prefix__-todays_date" id="id_steps-__prefix__-todays_date" class="form-control">
     </div>
 
     <div class="form-group">
-        <label for="id_steps-__prefix__-assigned_to">Asignado a:</label>
+        <label for="id_steps-__prefix__-assigned_to">Assign to:</label>
         <select name="steps-__prefix__-assigned_to" id="steps-__prefix__-assigned_to" class="form-control">
-            <option value="" selected disabled>Elige una persona</option>
+            <option value="" selected disabled>Choose a worker</option>
             {% for user in users %}
             <option value="{{ user.username }}">{{ user.username }}</option>
             {% endfor %}
