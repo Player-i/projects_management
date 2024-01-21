@@ -319,3 +319,44 @@ def duplicate_project(request, project_id):
 
     # Redirect the user to the newly duplicated project's details page
     return redirect("project_details", new_project.id)
+
+
+def workers(request):
+    context = {}
+    user = request.user
+    if user.is_authenticated:
+        if user.is_project_manager:
+            workers = MyUser.objects.filter(manager=user.email)
+            projects = (
+                Project.objects.filter(author=user)
+                .prefetch_related("step_set")
+                .order_by("-id")  # Reverse order by project ID
+                .all()
+            )
+
+            all_steps = Step.objects.filter(project__in=projects).order_by("project_id")
+            # Count steps assigned to each worker completed or not
+            for worker in workers:
+                assigned_steps_count = all_steps.filter(
+                    assigned_to=worker.username
+                ).count()
+                worker.assigned_steps_count = assigned_steps_count
+                completed_steps_count = Step.objects.filter(
+                    assigned_to=worker.username, is_done=True
+                ).count()
+                worker.completed_steps_count = completed_steps_count
+
+                if worker.completed_steps_count > 0:
+                    worker.progress_percentage = (
+                        worker.completed_steps_count / worker.assigned_steps_count
+                    ) * 100
+                else:
+                    worker.progress_percentage = 0
+        else:
+            return redirect("home")
+
+        context["projects"] = projects
+        context["user"] = user
+        context["workers"] = workers
+
+        return render(request, "workers.html", context=context)

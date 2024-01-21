@@ -24,6 +24,7 @@ urlpatterns = [
     path("register/", views.register, name="register"),
     path("logout/", views.logout_view, name="logout"),
     path("create/", views.create_project, name="create_project"),
+    path("workers/", views.workers, name="workers"),
     path("create_users/", views.create_users, name="create_users"),
     path("step/<int:step_id>/", views.step_details, name="step_details"),
     path("project/<int:project_id>/", views.project_details, name="project_details"),

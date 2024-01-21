@@ -35,6 +35,9 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_project_manager = models.BooleanField(default=False)
     manager = models.CharField(max_length=255, blank=True, null=True)
+    assigned_steps_count = models.BigIntegerField(default=0)
+    completed_steps_count = models.BigIntegerField(default=0)
+    progress_percentage = models.BigIntegerField(default=0)
 
     objects = MyUserManager()
 

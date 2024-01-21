@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+
+{% block title %}{% endblock %}
+
+{% block head %}
+<style>
+    body {
+        background-color: #f2f2f2;
+        margin: 0;
+        padding: 0;
+    }
+
+    .navbar {
+        background-color: #333;
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 20px;
+        align-items: center;
+    }
+
+    .navbar a {
+        color: white;
+        text-decoration: none;
+        margin: 0 5px;
+        padding: 8px 12px;
+        border-radius: 5px;
+    }
+
+    .navbar p {
+        color: white;
+        margin: 0;
+        font-weight: bold;
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
+    }
+
+    .container h1 {
+        margin: 10px 0;
+        font-size: 40px; /* Increased font size for "Proyectos" */
+    }
+
+
+
+    /* Media Query for Mobile View */
+    @media screen and (max-width: 600px) {
+        .navbar {
+            flex-direction: column;
+            text-align: center;
+        }
+        .navbar a {
+            margin: 5px 0;
+        }
+        .navbar p {
+            margin-top: 10px;
+        }
+        .container h1 {
+            font-size: 24px; /* Reduced font size for mobile view */
+        }
+
+    }
+
+
+    .worker-card {
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin: 10px 0;
+        padding: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .worker-info {
+        margin-bottom: 20px; /* Increase space above progress bar */
+    }
+
+
+
+    /* Media Query for Mobile View */
+    @media screen and (max-width: 600px) {
+        .worker-card {
+            flex-direction: column;
+        }
+    }
+
+    .progress-container {
+        width: 300px;
+        height: 20px;
+        margin-left: 12px;
+        background-color: #ddd;
+        border-radius: 10px;
+        overflow: hidden;
+        position: relative;
+        
+      }
+
+      .progress-bar {
+        height: 100%;
+        width: 0%; /* Change this value to set the initial progress */
+        background-color: #4caf50; /* Green color */
+        border-radius: 10px;
+      }
+
+      .progress-label {
+        position: absolute;
+        width: 100%;
+        top: 50%;
+        left: 0;
+        transform: translateY(-50%);
+        text-align: center;
+        font-size: 14px;
+        color: black; /* Choose a color that contrasts with your progress bar */
+        font-weight: bold;
+    }
+
+    .attachments-link {
+        color: inherit; /* Inherits the color from the parent element */
+        text-decoration: none; /* Removes underline from links */
+        cursor: pointer; /* Changes cursor to indicate clickable item */
+        transition: color 0.3s;
+    }
+    
+    .attachments-link:hover {
+        font-weight: bold    }
+
+
+
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="navbar">
+    <div>
+        {% if user.is_authenticated %}
+            <a href="/logout/">Logout</a>
+            {% if user.is_project_manager %}
+            <a href="/create/">New Project</a>
+            <a href="/workers/">Workers</a>
+            <a href="/create_users/">Create Worker</a>
+            {% endif %}
+        {% else %}
+            <a href="/login/">Login</a>
+        {% endif %}
+    </div>
+    <p><a href="/">{{ user.username }}</a></p>
+</div>
+
+<div class="container">
+    <h1>Workers</h1>
+    {% for worker in workers %}
+    <div class="worker-card" >
+        <div class="worker-info">
+            <h3>{{ worker.username }}</h3>
+            <a href="#" class="attachments-link">See the attachments of this worker</a>
+        </div>
+        
+        <!-- Progress Bar Container -->
+        <div class="progress-container">
+            <!-- Progress Bar -->
+            <div class="progress-bar" style="width: {{worker.progress_percentage}}%"></div>
+            <!-- Progress Label -->
+            <div class="progress-label">Progress</div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}
