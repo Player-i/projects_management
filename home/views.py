@@ -33,10 +33,13 @@ def home(request):
         else:
             manager = MyUser.objects.get(email=user.manager)
             projects = (
-                Project.objects.filter(author=manager)
+                Project.objects.filter(
+                    step__assigned_to=user.username,  # Filter projects based on steps assigned to the user
+                    step__project__author=manager,  # Additionally, the project's author must be the user's manager
+                )
+                .distinct()
                 .prefetch_related("step_set")
-                .order_by("-id")  # Reverse order by project ID
-                .all()
+                .order_by("-id")
             )
         context["projects"] = projects
         context["user"] = user
@@ -122,12 +125,13 @@ def step_details(request, step_id):
 
     if request.method == "POST":
         # Check if the user submitted the StepDoneForm
+
         if "step_done_form" in request.POST:
-            step_done_form = StepDoneForm(request.POST, instance=step)
+            step_done_form = StepDoneForm(request.POST, request.FILES, instance=step)
             if step_done_form.is_valid():
                 step_done_form.save()
-                # Redirect to the project_details page with the project_id in the URL
                 return redirect("project_details", project_id=project_id)
+
     context["user"] = user
     context["step"] = step
     context["step_done_form"] = step_done_form

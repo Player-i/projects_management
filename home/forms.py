@@ -23,7 +23,7 @@ class StepForm(forms.ModelForm):
 class StepDoneForm(forms.ModelForm):
     class Meta:
         model = Step
-        fields = ["is_done"]
+        fields = ["is_done", "file", "sign_sheet"]
 
 
 class UserRegistrationForm(UserCreationForm):
