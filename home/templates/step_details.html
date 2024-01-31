@@ -5,36 +5,78 @@
 <div class="container step-details-container">
     <div id="step_details">
         <h1>Assignment Details:</h1>
-        <h2>{{ step.name }}</h2>
-        <p>Any guidelines related: {{ step.description }}</p>
+        {% comment %} <h2>{{ step.name }}</h2> {% endcomment %}
+        <p>{{ step.description }}</p>
         <p>Today's Date {{ step.todays_date }}</p>
-        <p>Assign to: {{ step.assigned_to }}</p>
-        {% if step.file %}
-        <p><a href="{{ step.file.url }}"  target="_blank">See picture of work</a></p>
-        {% endif %}
-        {% if step.sign_sheet %}
-        <p><a href="{{ step.sign_sheet.url }}"  target="_blank">See sign job sheet</a></p>
-        {% endif %}
+        <p>Assigned to: {{ step.assigned_to }}</p>
         <!-- Add any other step details you want to display -->
 
         <!-- Step Done Form -->
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
-    
+            <div class="form-group">
+                <label for="id_description">Additional Comments</label>
+                <textarea name="description" cols="40" rows="3" required id="id_description">
+                    {{step.description}}
+                </textarea>
 
-            <div class="form-group">
-                <label for="{{ step_done_form.is_done.id_for_label }}">Assignment Completed</label>
-                {{ step_done_form.is_done }}
-            </div>
+                
+                    <div class="form-group">
+                        <label for="{{ step_done_form.is_done.id_for_label }}">Assignment Completed</label>
+                        {{ step_done_form.is_done }}
+                    </div>
+                
+                    <div class="form-row">
+                        {% if step.file  %}
+                                <img src="{{ step.file.url }}" alt="9am" style="max-width: 120px; max-height: 120px;">
+                                
+                        {% else %}
+                            <div class="form-group">
+                                <label for="{{ step_done_form.file.id_for_label }}">Picture 9am</label>
+                                <input type="file" name="{{ step_done_form.file.name }}" id="{{ step_done_form.file.id_for_label }}" onchange="previewImage(event, 'preview-1')">
+                                <div id="preview-1" class="image-preview"></div>
+                            </div>
+                        {% endif %}
+                        {% if step.file2  %}
+                                <img src="{{ step.file2.url }}" alt="11am" style="max-width: 120px; max-height: 120px;">
+                        {% else %}
+                            <div class="form-group">
+                                <label for="{{ step_done_form.file2.id_for_label }}">Picture 11am</label>
+                                <input type="file" name="{{ step_done_form.file2.name }}" id="{{ step_done_form.file2.id_for_label }}" onchange="previewImage(event, 'preview-1')">
+                                <div id="preview-1" class="image-preview"></div>
+                            </div>
+                        {% endif %}
+                        {% if step.file3  %}
+                                <img src="{{ step.file3.url }}" alt="1pm" style="max-width: 120px; max-height: 120px;">
+                        {% else %}
+                            <div class="form-group">
+                                <label for="{{ step_done_form.file3.id_for_label }}">Picture 1pm</label>
+                                <input type="file" name="{{ step_done_form.file3.name }}" id="{{ step_done_form.file3.id_for_label }}" onchange="previewImage(event, 'preview-1')">
+                                <div id="preview-1" class="image-preview"></div>
+                            </div>
+                        {% endif %}
+                        {% if step.file4  %}
+                                <img src="{{ step.file4.url }}" alt="End" style="max-width: 120px; max-height: 120px;">
+                        {% else %}
+                            <div class="form-group">
+                                <label for="{{ step_done_form.file4.id_for_label }}">Picture End</label>
+                                <input type="file" name="{{ step_done_form.file4.name }}" id="{{ step_done_form.file4.id_for_label }}" onchange="previewImage(event, 'preview-1')">
+                                <div id="preview-1" class="image-preview"></div>
+                            </div>
+                        {% endif %}
+                    </div>
+
         
-            <div class="form-group">
-                <label for="{{ step_done_form.file.id_for_label }}">Picture</label>
-                {{ step_done_form.file }}
-            </div>
-        
-            <div class="form-group">
-                <label for="{{ step_done_form.sign_sheet.id_for_label }}">Sign Sheet</label>
-                {{ step_done_form.sign_sheet }}
+                {% if step.sign_sheet  %}
+                <img src="{{ step.sign_sheet.url }}" alt="End" style="max-width: 120px; max-height: 500px;">
+            
+                {% else %}
+                <div class="form-group">
+                    <label for="{{ step_done_form.sign_sheet.id_for_label }}">Sign Sheet</label>
+                    <input type="file" name="{{ step_done_form.sign_sheet.name }}" id="{{ step_done_form.sign_sheet.id_for_label }}" onchange="previewImage(event, 'preview-1')">
+                    <div id="preview-1" class="image-preview"></div>
+                </div>
+                {% endif %}
             </div>
             <!-- Customize any additional fields in the form -->
 
@@ -51,6 +93,34 @@
 </div>
 
 <style>
+
+    input[type="file"] {
+        width: 100px; /* Adjust the width as needed */
+        border-radius: 4px; /* Optional: Rounds the corners */
+    }
+    .form-group {
+        margin-bottom: 20px;
+        flex: 1; /* Each form group takes equal width */
+        min-width: 0; 
+    }
+    .form-row {
+        display: flex;
+        justify-content: space-between; /* Distributes space between the form groups */
+        gap: 20px; /* Adjust the gap between the form groups */
+        margin-bottom: 20px;
+
+    }
+
+    textarea#id_description {
+        width: 100%; /* Full width */
+        padding: 10px; /* Comfortable padding */
+        border: 1px solid #dbdbdb; /* Consistent border with other elements */
+        border-radius: 5px; /* Slight round corners */
+        font-family: Arial, sans-serif; /* Consistent font style */
+        font-size: 14px; /* Readable font size */
+        resize: vertical; /* Allow vertical resizing */
+        box-sizing: border-box; /* Include padding and border in the width */
+    }
     body {
         background-color: #f2f2f2;
         margin: 0;
@@ -115,5 +185,4 @@
 
     /* Rest of your CSS styles */
 </style>
-
 {% endblock %}

@@ -63,6 +63,8 @@ class Project(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     name = models.CharField(max_length=100)
     description = models.TextField()
+    equipment = models.TextField(blank=True)
+    vehicle = models.TextField(blank=True)
     todays_date = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
@@ -71,12 +73,15 @@ class Project(models.Model):
 
 class Step(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100)
-    description = models.TextField()
+    # name = models.CharField(max_length=100)
+    description = models.TextField(null=True, blank=True, default="")
     todays_date = models.DateField(null=True, blank=True)
     is_done = models.BooleanField(default=False)
-    assigned_to = models.CharField(max_length=100)
+    assigned_to = models.CharField(max_length=100, null=True)
     file = models.FileField(upload_to="static/steps/", null=True, blank=True)
+    file2 = models.FileField(upload_to="static/steps/", null=True, blank=True)
+    file3 = models.FileField(upload_to="static/steps/", null=True, blank=True)
+    file4 = models.FileField(upload_to="static/steps/", null=True, blank=True)
     sign_sheet = models.FileField(upload_to="static/steps/", null=True, blank=True)
 
     def __str__(self):

@@ -15,7 +15,7 @@
 </div>
 
 <div class="container register-form-container" style="background-color: #333; color: #fff;">
-    <h3>Proyecto</h3>
+    <h3>Project</h3>
     <form method="post"  enctype="multipart/form-data" >
         {% csrf_token %}
         <p>
@@ -27,12 +27,27 @@
         
           
           <p>
-            <label for="id_description">Description of work needed</label>
-            <textarea name="description" cols="40" rows="10"  required id="id_description">{{ project.description}} 
+            <label for="id_description">Description of work required for completion</label>
+            <textarea name="description" cols="40" rows="5"  required id="id_description">{{ project.description}} 
         </textarea>
             
             
           </p>
+
+          <p>
+            <label for="id_equipment">Equipment & Supplies Needed</label>
+            <textarea name="equipment" cols="40" rows="5"  required id="id_equipment">{{ project.equipment}} 
+        </textarea>
+            
+            
+          </p>
+
+          <label for="id_vehicle">Vehicle Needed</label>
+          <textarea name="vehicle" cols="40" rows="3"  required id="id_vehicle">{{ project.vehicle}} 
+      </textarea>
+          
+          
+        </p>
         
           
           <p>
@@ -43,61 +58,99 @@
               
             
           </p>
-
+        
         <input type="hidden" name="steps-TOTAL_FORMS" value="1" id="id_steps-TOTAL_FORMS"><input type="hidden" name="steps-INITIAL_FORMS" value="0" id="id_steps-INITIAL_FORMS"><input type="hidden" name="steps-MIN_NUM_FORMS" value="1" id="id_steps-MIN_NUM_FORMS"><input type="hidden" name="steps-MAX_NUM_FORMS" value="1000" id="id_steps-MAX_NUM_FORMS">
         <h3>Assignments</h3>
         <div id="existing-steps">
             {% for step in steps %}
-            <div class="form-group">
-                <label for="id_steps-{{ forloop.counter0 }}-name">Name of the Assignment</label>
-                <input type="text" name="steps-{{ forloop.counter0 }}-name" value="{{ step.name }}" required>
-            </div>
-            {% if step.file %}
-            <div class="form-group">
-                
-                <a href="{{ step.file.url }}" target="_blank"><label>Picture of work:</label></a>
-            </div>
-            {% endif %}
 
-            {% if step.sign_sheet %}
-            <div class="form-group">
-                
-                <a href="{{ step.sign_sheet.url }}" target="_blank"><label>Sign job sheet:</label></a>
-            </div>
-            {% endif %}
+                    {% comment %} <div class="form-group">
+                        <label for="id_steps-{{ forloop.counter0 }}-name">Name of the Assignment</label>
+                        <input type="text" name="steps-{{ forloop.counter0 }}-name" value="{{ step.name }}" required>
+                    </div> {% endcomment %}
+                    <div class="form-group">
+                        <label for="id_steps-{{ forloop.counter0 }}-assigned_to">Assigned to:</label>
+                        <select name="steps-{{ forloop.counter0 }}-assigned_to">
+                            <option value="" disabled>Choose a worker</option>
+                            {% for user in users %}
+                                <option value="{{ user.username }}" {% if step.assigned_to == user.username %}selected{% endif %}>{{ user.username }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
 
-            <!-- Add the file input field to change the file -->
-            <div class="form-group">
-                <label for="id_steps-{{ forloop.counter0 }}-file">Picture (Leave in blank to keep current pic)</label>
-                <input type="file" name="steps-{{ forloop.counter0 }}-file" accept="image/*, .pdf, .doc, .docx">
-            </div>
+                    <div class="form-group">
+                        <label for="id_steps-{{ forloop.counter0 }}-todays_date">Today's Date</label>
+                        <input type="date" name="steps-{{ forloop.counter0 }}-todays_date" value="{{ step.todays_date|date:'Y-m-d' }}" required>
+                    </div>
 
-            <div class="form-group">
-                <label for="id_steps-{{ forloop.counter0 }}-sign_sheet">Sign job sheet (Leave in blank to keep current pic)</label>
-                <input type="file" name="steps-{{ forloop.counter0 }}-sign_sheet" accept="image/*, .pdf, .doc, .docx">
-            </div>
-    
-            <div class="form-group">
-                <label for="id_steps-{{ forloop.counter0 }}-description">Any guidelines related</label>
-                <textarea name="steps-{{ forloop.counter0 }}-description" rows="4" required>{{ step.description }}</textarea>
-            </div>
-            <div class="form-group">
-                <label for="id_steps-{{ forloop.counter0 }}-todays_date">Today's Date</label>
-                <input type="date" name="steps-{{ forloop.counter0 }}-todays_date" value="{{ step.todays_date|date:'Y-m-d' }}" required>
-            </div>
-            <div class="form-group">
-                <label for="id_steps-{{ forloop.counter0 }}-assigned_to">Assign to:</label>
-                <select name="steps-{{ forloop.counter0 }}-assigned_to">
-                    <option value="" disabled>Choose a worker</option>
-                    {% for user in users %}
-                        <option value="{{ user.username }}" {% if step.assigned_to == user.username %}selected{% endif %}>{{ user.username }}</option>
-                    {% endfor %}
-                </select>
-            </div>
+                <div class="form-row">
+                    {% if step.file %}
+                    <div class="form-group">
+                        
+                        <a href="{{ step.file.url }}" target="_blank"><label>Picture 9am:</label></a>
+                    </div>
+                    {% endif %}
+                    {% if step.file2 %}
+                    <div class="form-group">
+                        
+                        <a href="{{ step.file2.url }}" target="_blank"><label>Picture 11am:</label></a>
+                    </div>
+                    {% endif %}
+                    {% if step.file3 %}
+                    <div class="form-group">
+                        
+                        <a href="{{ step.file3.url }}" target="_blank"><label>Picture 1pm:</label></a>
+                    </div>
+                    {% endif %}
+                    {% if step.file4 %}
+                    <div class="form-group">
+                        
+                        <a href="{{ step.file4.url }}" target="_blank"><label>Picture End:</label></a>
+                    </div>
+                    {% endif %}
+                </div>
+
+                    {% if step.sign_sheet %}
+                    <div class="form-group">
+                        
+                        <a href="{{ step.sign_sheet.url }}" target="_blank"><label>Sign job sheet:</label></a>
+                    </div>
+                    {% endif %}
+
+                    <!-- Add the file input field to change the file -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="id_steps-{{ forloop.counter0 }}-file">Picture 9am</label>
+                            <input type="file" name="steps-{{ forloop.counter0 }}-file" accept="image/*, .pdf, .doc, .docx">
+                        </div>
+                        <div class="form-group">
+                            <label for="id_steps-{{ forloop.counter0 }}-file2">Picture 11am</label>
+                            <input type="file" name="steps-{{ forloop.counter0 }}-file2" accept="image/*, .pdf, .doc, .docx">
+                        </div>
+                        <div class="form-group">
+                            <label for="id_steps-{{ forloop.counter0 }}-file3">Picture 1pm</label>
+                            <input type="file" name="steps-{{ forloop.counter0 }}-file3" accept="image/*, .pdf, .doc, .docx">
+                        </div>
+                        <div class="form-group">
+                            <label for="id_steps-{{ forloop.counter0 }}-file4">Picture End</label>
+                            <input type="file" name="steps-{{ forloop.counter0 }}-file4" accept="image/*, .pdf, .doc, .docx">
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="id_steps-{{ forloop.counter0 }}-sign_sheet">Sign job sheet (Leave in blank to keep current pic)</label>
+                        <input type="file" name="steps-{{ forloop.counter0 }}-sign_sheet" accept="image/*, .pdf, .doc, .docx">
+                    </div>
+            
+                    <div class="form-group">
+                        <label for="id_steps-{{ forloop.counter0 }}-description">Additional Comments</label>
+                        <textarea name="steps-{{ forloop.counter0 }}-description" rows="4" >{{ step.description }}</textarea>
+                    </div>
             {% endfor %}
         </div>
 
-        <button type="button" id="add-step-btn" class="btn btn-primary">Add an assignment</button>
+        <button type="button" id="add-step-btn" class="btn btn-primary">Add Worker</button>
 
         <input type="submit" value="Save changes" class="btn btn-primary">
     </form>
@@ -132,14 +185,39 @@
 </script>
 
 <div id="empty-form" style="display:none;">
+
     <div class="form-group">
-        <label for="id_steps-__prefix__-name">Assignment Name</label>
-        <input type="text" name="steps-__prefix__-name" maxlength="100" id="id_steps-__prefix__-name" class="form-control">
+        <label for="id_steps-__prefix__-assigned_to">Assigned to:</label>
+        <select name="steps-__prefix__-assigned_to" id="steps-__prefix__-assigned_to" class="form-control">
+            <option value="" selected disabled>Choose a worker</option>
+            {% for user in users %}
+            <option value="{{ user.username }}">{{ user.username }}</option>
+            {% endfor %}
+        </select>
     </div>
 
     <div class="form-group">
-        <label for="id_steps-__prefix__-file">Pictures of work:</label>
-        <input type="file" name="steps-__prefix__-file" id="id_steps-__prefix__-file" class="form-control">
+        <label for="id_steps-__prefix__-todays_date">Today's Date</label>
+        <input type="date" name="steps-__prefix__-todays_date" id="id_steps-__prefix__-todays_date" class="form-control">
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label for="id_steps-__prefix__-file">Picture 9am:</label>
+            <input type="file" name="steps-__prefix__-file" id="id_steps-__prefix__-file" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="id_steps-__prefix__-file2">Picture 11am:</label>
+            <input type="file" name="steps-__prefix__-file2" id="id_steps-__prefix__-file2" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="id_steps-__prefix__-file3">Picture 1pm:</label>
+            <input type="file" name="steps-__prefix__-file3" id="id_steps-__prefix__-file3" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="id_steps-__prefix__-file4">Picture End:</label>
+            <input type="file" name="steps-__prefix__-file4" id="id_steps-__prefix__-file4" class="form-control">
+        </div>
     </div>
 
     <div class="form-group">
@@ -148,26 +226,28 @@
     </div>
 
     <div class="form-group">
-        <label for="id_steps-__prefix__-description">Any guidelines related</label>
-        <textarea name="steps-__prefix__-description" cols="40" rows="10" id="id_steps-__prefix__-description" class="form-control"></textarea>
+        <label for="id_steps-__prefix__-description">Additional Comments</label>
+        <textarea name="steps-__prefix__-description" cols="40" rows="5" id="id_steps-__prefix__-description" class="form-control"></textarea>
     </div>
 
-    <div class="form-group">
-        <label for="id_steps-__prefix__-todays_date">Today's Date</label>
-        <input type="date" name="steps-__prefix__-todays_date" id="id_steps-__prefix__-todays_date" class="form-control">
-    </div>
 
-    <div class="form-group">
-        <label for="id_steps-__prefix__-assigned_to">Assign to:</label>
-        <select name="steps-__prefix__-assigned_to" id="steps-__prefix__-assigned_to" class="form-control">
-            <option value="" selected disabled>Choose a worker</option>
-            {% for user in users %}
-            <option value="{{ user.username }}">{{ user.username }}</option>
-            {% endfor %}
-        </select>
-    </div>
 </div>
 <style>
+
+    input[type="file"] {
+        width: 100px; /* Adjust the width as needed */
+        border-radius: 4px; /* Optional: Rounds the corners */
+    }
+    .form-group {
+        margin-bottom: 20px;
+        flex: 1; /* Each form group takes equal width */
+        min-width: 0; 
+    }
+    .form-row {
+        display: flex;
+        justify-content: space-between; /* Distributes space between the form groups */
+        gap: 20px; /* Adjust the gap between the form groups */
+    }
 
     .navbar {
         background-color: #333;
@@ -212,9 +292,6 @@
         margin-bottom: 20px;
     }
 
-    .form-group {
-        margin-bottom: 20px;
-    }
 
     .form-group label {
         font-weight: bold;

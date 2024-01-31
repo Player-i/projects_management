@@ -16,14 +16,32 @@ class StepForm(forms.ModelForm):
 
     class Meta:
         model = Step
-        fields = ["name", "description", "todays_date", "file", "sign_sheet"]
+        # fields = ["name", "description", "todays_date", "file", "sign_sheet"]
+        fields = [
+            "description",
+            "todays_date",
+            "file",
+            "file2",
+            "file3",
+            "file4",
+            "sign_sheet",
+        ]
+
         widgets = {"todays_date": forms.DateInput(attrs={"type": "date"})}
 
 
 class StepDoneForm(forms.ModelForm):
     class Meta:
         model = Step
-        fields = ["is_done", "file", "sign_sheet"]
+        fields = [
+            "is_done",
+            "file",
+            "file2",
+            "file3",
+            "file4",
+            "sign_sheet",
+            "description",
+        ]
 
 
 class UserRegistrationForm(UserCreationForm):

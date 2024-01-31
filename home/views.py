@@ -306,7 +306,7 @@ def duplicate_project(request, project_id):
         name=f"{original_project.name} (Copy)",
         author=request.user,
         description=original_project.description,
-        due_date=original_project.due_date,
+        todays_date=original_project.todays_date,
         # Add any other fields you want to duplicate here
     )
 
@@ -314,7 +314,6 @@ def duplicate_project(request, project_id):
     for step in original_project.step_set.all():
         Step.objects.create(
             project=new_project,
-            name=step.name,
             description=step.description,
             todays_date=step.todays_date,
             assigned_to=step.assigned_to,

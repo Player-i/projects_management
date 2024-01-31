@@ -20,7 +20,7 @@
         {% csrf_token %}
         
         <!-- Customize each form field as needed -->
-        <div class="form-group">
+        {% comment %} <div class="form-group">
             <label for="{{ form.name.id_for_label }}">Assignment Name:</label>
             <input type="text" name="{{ form.name.name }}" maxlength="100" required id="{{ form.name.auto_id }}" class="form-control" value="{{ form.name.value }}">
             {% if form.name.errors %}
@@ -30,25 +30,109 @@
                     {% endfor %}
                 </ul>
             {% endif %}
-        </div>
+        </div> {% endcomment %}
 
         <div class="form-group">
-            <label for="{{ form.file.id_for_label }}">Pictures of work:</label>
-            <input type="file" name="{{ form.file.name }}" id="{{ form.file.auto_id }}" class="form-control">
-            {% if form.file.errors %}
+            <label for="{{ form.assigned_to.id_for_label }}">Assign to:</label>
+            <select name="{{ form.assigned_to.name }}" id="{{ form.assigned_to.auto_id }}" class="form-control">
+                <option value="" selected disabled>Choose a worker</option>
+                {% for user in users %}
+                    <option value="{{ user.username }}" {% if step.assigned_to == user.username %}selected{% endif %}>{{ user.username }}</option>
+                {% endfor %}
+            </select>
+            {% if form.assigned_to.errors %}
                 <ul class="errorlist">
-                    {% for error in form.file.errors %}
+                    {% for error in form.assigned_to.errors %}
                         <li>{{ error }}</li>
                     {% endfor %}
                 </ul>
             {% endif %}
-            {% if step.file %}
-                <div class="current-file">
-                    <label>Picture:</label>
-                    <a href="{{ step.file.url }}" target="_blank">See Picture</a>
-                </div>
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.todays_date.id_for_label }}">Today's Date</label>
+            <input type="date" name="{{ form.todays_date.name }}" required id="{{ form.todays_date.auto_id }}" class="form-control" value="{{ form.todays_date.value|date:'Y-m-d' }}">
+            {% if form.todays_date.errors %}
+                <ul class="errorlist">
+                    {% for error in form.todays_date.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
             {% endif %}
         </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="{{ form.file.id_for_label }}">Pictures 9am:</label>
+                    <input type="file" name="{{ form.file.name }}" id="{{ form.file.auto_id }}" class="form-control">
+                    {% if form.file.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.file.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    {% if step.file %}
+                        <div class="current-file">
+                            <label>Picture 9am:</label>
+                            <a href="{{ step.file.url }}" target="_blank">9am</a>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.file2.id_for_label }}">Pictures 11am:</label>
+                    <input type="file" name="{{ form.file2.name }}" id="{{ form.file2.auto_id }}" class="form-control">
+                    {% if form.file2.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.file2.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    {% if step.file2 %}
+                        <div class="current-file">
+                            <label>Picture 11am:</label>
+                            <a href="{{ step.file2.url }}" target="_blank">11am</a>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.file3.id_for_label }}">Pictures 1pm:</label>
+                    <input type="file" name="{{ form.file3.name }}" id="{{ form.file3.auto_id }}" class="form-control">
+                    {% if form.file3.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.file3.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    {% if step.file3 %}
+                        <div class="current-file">
+                            <label>Picture 1pm:</label>
+                            <a href="{{ step.file3.url }}" target="_blank">1pm</a>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.file4.id_for_label }}">Pictures End:</label>
+                    <input type="file" name="{{ form.file4.name }}" id="{{ form.file4.auto_id }}" class="form-control">
+                    {% if form.file4.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.file4.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    {% if step.file4 %}
+                        <div class="current-file">
+                            <label>Picture 11am:</label>
+                            <a href="{{ step.file4.url }}" target="_blank">End</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
 
         <div class="form-group">
             <label for="{{ form.sign_sheet.id_for_label }}">Sign job sheet:</label>
@@ -69,8 +153,8 @@
         </div>
         
         <div class="form-group">
-            <label for="{{ form.description.id_for_label }}">Any guidelines related</label>
-            <textarea name="{{ form.description.name }}" rows="4" required id="{{ form.description.auto_id }}" class="form-control">{{ form.description.value }}</textarea>
+            <label for="{{ form.description.id_for_label }}">Additional Comments</label>
+            <textarea name="{{ form.description.name }}" rows="5" required id="{{ form.description.auto_id }}" class="form-control">{{ form.description.value }}</textarea>
             {% if form.description.errors %}
                 <ul class="errorlist">
                     {% for error in form.description.errors %}
@@ -79,35 +163,7 @@
                 </ul>
             {% endif %}
         </div>
-        
-        <div class="form-group">
-            <label for="{{ form.todays_date.id_for_label }}">Today's Date</label>
-            <input type="date" name="{{ form.todays_date.name }}" required id="{{ form.todays_date.auto_id }}" class="form-control" value="{{ form.todays_date.value|date:'Y-m-d' }}">
-            {% if form.todays_date.errors %}
-                <ul class="errorlist">
-                    {% for error in form.todays_date.errors %}
-                        <li>{{ error }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-        </div>
-        
-        <div class="form-group">
-            <label for="{{ form.assigned_to.id_for_label }}">Assign to:</label>
-            <select name="{{ form.assigned_to.name }}" id="{{ form.assigned_to.auto_id }}" class="form-control">
-                <option value="" selected disabled>Choose a worker</option>
-                {% for user in users %}
-                    <option value="{{ user.username }}" {% if step.assigned_to == user.username %}selected{% endif %}>{{ user.username }}</option>
-                {% endfor %}
-            </select>
-            {% if form.assigned_to.errors %}
-                <ul class="errorlist">
-                    {% for error in form.assigned_to.errors %}
-                        <li>{{ error }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-        </div>
+                
         
         <input type="submit" value="Save changes" class="btn btn-primary" style="background-color: #8a00b8; color: #fff;">
     </form>
@@ -154,9 +210,6 @@
         margin: 0 auto;
     }
 
-    .form-group {
-        margin-bottom: 20px;
-    }
 
     .form-group label {
         font-weight: bold;
@@ -213,6 +266,19 @@
     input[type="date"] {
         width: 100%;
     }
-
+    input[type="file"] {
+        width: 100px; /* Adjust the width as needed */
+        border-radius: 4px; /* Optional: Rounds the corners */
+    }
+    .form-group {
+        margin-bottom: 20px;
+        flex: 1; /* Each form group takes equal width */
+        min-width: 0; 
+    }
+    .form-row {
+        display: flex;
+        justify-content: space-between; /* Distributes space between the form groups */
+        gap: 20px; /* Adjust the gap between the form groups */
+    }
 </style>
 {% endblock %}

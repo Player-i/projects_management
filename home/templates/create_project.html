@@ -28,13 +28,27 @@
         
           
           <p>
-            <label for="id_description">Description of work needed</label>
-            <textarea name="description" cols="40" rows="10" required id="id_description">
+            <label for="id_description">Description of work required for completion</label>
+            <textarea name="description" cols="40" rows="5" required id="id_description">
         </textarea>
             
             
           </p>
-        
+
+          <p>
+            <label for="id_equipment">Equipment & Supplies Needed</label>
+            <textarea name="equipment" cols="40" rows="5" required id="id_equipment">
+        </textarea>
+            
+            
+          </p>
+          <p>
+            <label for="id_vehicle">Vehicle Needed</label>
+            <textarea name="vehicle" cols="40" rows="3" required id="id_vehicle">
+        </textarea>
+            
+            
+          </p>
           
           <p>
             <label for="id_todays_date">Today's Date</label>
@@ -50,14 +64,44 @@
             {{ formset.management_form }}
 
             {% for form in formset %}
-            <div class="form-group">
+            {% comment %} <div class="form-group">
                 <label for="{{ form.name.id_for_label }}">Assignment Name:</label>
                 {{ form.name }}
+            </div> {% endcomment %}
+
+                        <!-- Change the input field to a select element for "Assigned To" field -->
+            <div class="form-group">
+                <label for="{{ form.prefix }}-assigned_to">Assigned to:</label>
+                <select name="{{ form.prefix }}-assigned_to" id="{{ form.prefix }}-assigned_to" class="form-control">
+                    <option value="" selected disabled>Choose a worker</option>
+                    {% for user in users %}
+                    <option value="{{ user.username }}">{{ user.username }}</option>
+                    {% endfor %}
+                </select>
             </div>
 
             <div class="form-group">
-                <label for="{{ form.file.id_for_label }}">Pictures of work:</label>
-                {{ form.file }}
+                <label for="{{ form.todays_date.id_for_label }}">Today's Date</label>
+                {{ form.todays_date }}
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="{{ form.file.id_for_label }}">Picture 9am:</label>
+                    {{ form.file }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.file2.id_for_label }}">Picture 11am:</label>
+                    {{ form.file2 }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.file3.id_for_label }}">Picture 1pm:</label>
+                    {{ form.file3 }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.file4.id_for_label }}">Picture 4pm:</label>
+                    {{ form.file4 }}
+                </div>
             </div>
 
             <div class="form-group">
@@ -66,28 +110,15 @@
             </div>
 
             <div class="form-group">
-                <label for="{{ form.description.id_for_label }}">Any guidelines related</label>
-                {{ form.description }}
-            </div>
-            <div class="form-group">
-                <label for="{{ form.todays_date.id_for_label }}">Today's Date</label>
-                {{ form.todays_date }}
+                <label for="id_steps-0-description">Additional Comments</label>
+                <textarea name="steps-0-description" cols="40" rows="10" id="id_steps-0-description"> </textarea>
             </div>
 
-            <!-- Change the input field to a select element for "Assigned To" field -->
-            <div class="form-group">
-                <label for="{{ form.prefix }}-assigned_to">Assign to:</label>
-                <select name="{{ form.prefix }}-assigned_to" id="{{ form.prefix }}-assigned_to" class="form-control">
-                    <option value="" selected disabled>Choose a worker</option>
-                    {% for user in users %}
-                    <option value="{{ user.username }}">{{ user.username }}</option>
-                    {% endfor %}
-                </select>
-            </div>
+
             {% endfor %}
         </div>
 
-        <button type="button" id="add-step-btn" class="btn btn-primary">Add an assignment</button>
+        <button type="button" id="add-step-btn" class="btn btn-primary">Add Worker</button>
         <input type="submit" value="Create Project" class="btn btn-primary">
     </form>
 </div>
@@ -157,33 +188,10 @@
   </script>
 
 <div id="empty-form" style="display:none;">
-    <div class="form-group">
-        <label for="id_steps-__prefix__-name">Assignment Name:</label>
-        <input type="text" name="steps-__prefix__-name" maxlength="100" id="id_steps-__prefix__-name" class="form-control">
-    </div>
+
 
     <div class="form-group">
-        <label for="id_steps-__prefix__-file">Pictures of work:</label>
-        <input type="file" name="steps-__prefix__-file" id="id_steps-__prefix__-file" class="form-control">
-    </div>
-
-    <div class="form-group">
-        <label for="id_steps-__prefix__-sign_sheet">Sign job sheet:</label>
-        <input type="file" name="steps-__prefix__-sign_sheet" id="id_steps-__prefix__-sign_sheet" class="form-control">
-    </div>
-
-    <div class="form-group">
-        <label for="id_steps-__prefix__-description">Any guidelines related</label>
-        <textarea name="steps-__prefix__-description" cols="40" rows="10" id="id_steps-__prefix__-description" class="form-control"></textarea>
-    </div>
-
-    <div class="form-group">
-        <label for="id_steps-__prefix__-todays_date">Today's Date</label>
-        <input type="date" name="steps-__prefix__-todays_date" id="id_steps-__prefix__-todays_date" class="form-control">
-    </div>
-
-    <div class="form-group">
-        <label for="id_steps-__prefix__-assigned_to">Assign to:</label>
+        <label for="id_steps-__prefix__-assigned_to">Assigned to:</label>
         <select name="steps-__prefix__-assigned_to" id="steps-__prefix__-assigned_to" class="form-control">
             <option value="" selected disabled>Choose a worker</option>
             {% for user in users %}
@@ -191,6 +199,43 @@
             {% endfor %}
         </select>
     </div>
+
+    <div class="form-group">
+        <label for="id_steps-__prefix__-todays_date">Today's Date</label>
+        <input type="date" name="steps-__prefix__-todays_date" id="id_steps-__prefix__-todays_date" class="form-control">
+    </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="id_steps-__prefix__-file">Picture 9am:</label>
+                <input type="file" name="steps-__prefix__-file" id="id_steps-__prefix__-file" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="id_steps-__prefix__-file2">Picture 11am:</label>
+                <input type="file" name="steps-__prefix__-file2" id="id_steps-__prefix__-file2" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="id_steps-__prefix__-file3">Picture 1pm:</label>
+                <input type="file" name="steps-__prefix__-file3" id="id_steps-__prefix__-file3" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="id_steps-__prefix__-file4">Picture End:</label>
+                <input type="file" name="steps-__prefix__-file4" id="id_steps-__prefix__-file4" class="form-control">
+            </div>
+        </div>
+
+
+    <div class="form-group">
+        <label for="id_steps-__prefix__-sign_sheet">Sign job sheet:</label>
+        <input type="file" name="steps-__prefix__-sign_sheet" id="id_steps-__prefix__-sign_sheet" class="form-control">
+    </div>
+
+    <div class="form-group">
+        <label for="id_steps-__prefix__-description">Additional Comments</label>
+        <textarea name="steps-__prefix__-description" cols="40" rows="10" id="id_steps-__prefix__-description" class="form-control"> </textarea>
+    </div>
+
+
 </div>
 <style>
 
@@ -224,6 +269,13 @@
         margin: 0;
         padding: 0;
     }
+
+    break-container{
+        background-color: #f2f2f2;
+        padding: 20px;
+        border: 1px solid #dbdbdb;
+        border-radius: 10px;
+    } 
    
         /* Your additional CSS styles specific to create_project.html */
         .container {
@@ -231,6 +283,11 @@
             margin: 0 auto;
             padding: 20px;
         }
+        input[type="file"] {
+            width: 100px; /* Adjust the width as needed */
+            border-radius: 4px; /* Optional: Rounds the corners */
+        }
+        
     
         .register-form-container {
             background-color: #ffffff;
@@ -242,6 +299,13 @@
     
         .form-group {
             margin-bottom: 20px;
+            flex: 1; /* Each form group takes equal width */
+            min-width: 0; 
+        }
+        .form-row {
+            display: flex;
+            justify-content: space-between; /* Distributes space between the form groups */
+            gap: 20px; /* Adjust the gap between the form groups */
         }
     
         .form-group label {

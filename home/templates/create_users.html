@@ -6,7 +6,7 @@
         {% if user.is_authenticated %}
             <a href="/logout/">Logout</a>
             <a href="/create/">New Project</a>
-            <a href="/workers/">Workers</a>
+            {% comment %} <a href="/workers/">Workers</a> {% endcomment %}
             <a href="/create_users/">Create Worker</a>
         {% else %}
             <a href="/login/">Login</a>

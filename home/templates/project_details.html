@@ -124,20 +124,22 @@
         {% for step in project.step_set.all %}
             {% if user.is_project_manager %}
                 <div class="step-container">
-                    <p class="step-name">{{ step.name }}</p>
+                    {% comment %} <p class="step-name">{{ step.name }}</p> {% endcomment %}
                     <p class="step-todays-date">Today's Date: {{ step.todays_date }}</p>
+                    <p class="step-name"> {{ step.description }}</p>
                     {% if user.is_project_manager %}
-                        <p>Assign to {{ step.assigned_to }}</p>
+                        <p>Assigned to: {{ step.assigned_to }}</p>
                     {% endif %}
                     <p><a class="step-details-link" href="{% url 'step_details' step.id %}">More details</a></p>
                 </div>
 
             {% elif step.assigned_to == user.username %}
             <div class="step-container">
-                <p class="step-name">{{ step.name }}</p>
+                {% comment %} <p class="step-name">{{ step.name }}</p> {% endcomment %}
                 <p class="step-todays-date">Today's Date: {{ step.todays_date }}</p>
+                <p class="step-name"> {{ step.description }}</p>
                 {% if user.is_project_manager %}
-                    <p>Assign to {{ step.assigned_to }}</p>
+                    <p>Assign to: {{ step.assigned_to }}</p>
                 {% endif %}
                 <p><a class="step-details-link" href="{% url 'step_details' step.id %}">More details</a></p>
             </div>
