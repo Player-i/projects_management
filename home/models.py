@@ -73,7 +73,7 @@ class Project(models.Model):
 
 class Step(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    # name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, default="") 
     description = models.TextField(null=True, blank=True, default="")
     todays_date = models.DateField(null=True, blank=True)
     is_done = models.BooleanField(default=False)

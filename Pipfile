@@ -17,6 +17,7 @@ psycopg2 = "==2.9.7"
 sqlparse = "==0.4.4"
 typing-extensions = "==4.7.1"
 tzdata = "==2023.3"
+djangorestframework = "*"
 
 [dev-packages]
 
