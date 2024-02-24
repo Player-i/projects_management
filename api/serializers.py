@@ -44,11 +44,26 @@ class ProjectSerializer(serializers.ModelSerializer):
         model = Project
         fields = '__all__'
 
+class StepSerializerSee(serializers.ModelSerializer):
 
-class StepSerializer(serializers.ModelSerializer):
     class Meta:
         model = Step
-        fields = '__all__'  # You can also specify the fields you want to include explicitly
+        fields = '__all__'
+
+class StepSerializerChange(serializers.ModelSerializer):
+    is_done = serializers.BooleanField()
+    description = serializers.CharField()
+    file = serializers.CharField(required=False, allow_null=True, write_only=True)
+    file2 = serializers.CharField(required=False, allow_null=True, write_only=True)
+    file3 = serializers.CharField(required=False, allow_null=True, write_only=True)
+    file4 = serializers.CharField(required=False, allow_null=True, write_only=True)
+    sign_sheet = serializers.CharField(required=False, allow_null=True, write_only=True)
+
+
+
+    class Meta:
+        model = Step
+        fields = ('id', 'description', 'is_done', 'file', 'file2', 'file3', 'file4', 'sign_sheet')
 
 
     # You can add any additional validation or custom behavior here if needed

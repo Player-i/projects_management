@@ -1,15 +1,16 @@
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from rest_framework import serializers, status
-from rest_framework.decorators import api_view
-from django.views.decorators.csrf import csrf_exempt
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from home.models import MyUser, MyUserManager, Project, Step
-from .serializers import UserSerializer, EmailLoginFormSerializer, UserRegistrationSerializer, ProjectSerializer, StepSerializer
+from .serializers import UserSerializer, EmailLoginFormSerializer, UserRegistrationSerializer, ProjectSerializer, StepSerializerSee, StepSerializerChange
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 import base64
 from django.core.files.base import ContentFile
-
+from django.contrib.sessions.models import Session
+from rest_framework.parsers import JSONParser
 
 
 # Create your views here.
@@ -125,7 +126,7 @@ def get_project_details(request, project_id, email):
 
         # Serialize the project and steps
         project_serializer = ProjectSerializer(project)
-        steps_serializer = StepSerializer(steps, many=True)
+        steps_serializer = StepSerializerSee(steps, many=True)
 
         # Combine project and steps data in a dictionary
         project_data = {
@@ -135,58 +136,95 @@ def get_project_details(request, project_id, email):
 
         return JsonResponse(project_data)
    
-
-@csrf_exempt
-@api_view(['POST'])
-def edit_step(request, step_id):
-    
+@api_view(['GET'])
+def get_step_details(request, step_id):
     step = Step.objects.get(id=step_id)
+    print(step.file2)
+
+    if request.method == "GET":
+        # Serialize the step data
+        step_serializer = StepSerializerSee(step)
+        print(step.file2)
+        return JsonResponse(step_serializer.data, status=status.HTTP_200_OK)
+
+
+
+
+# @api_view(['POST'])
+@csrf_exempt
+def edit_step(request, step_id):
+    try:
+        step = Step.objects.get(id=step_id)
+    except Step.DoesNotExist:
+        return JsonResponse({'detail': 'Step not found'}, status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'POST':
-        # Extract and save File1 URI
-        file_uri = request.data.get('file')
-        if file_uri:
-            file_content = base64.b64decode(file_uri.split(',')[1])
-            step.file.save(f'file_{step_id}.jpg', ContentFile(file_content), save=True)
-            print(f"File saved: {step.file.path}")
+        data = JSONParser().parse(request)
+        serializer = StepSerializerChange(data=data)
 
-        # Extract and save File2 URI
-        file2_uri = request.data.get('file2')
-        if file2_uri:
-            file2_content = base64.b64decode(file2_uri.split(',')[1])
-            step.file2.save(f'file2_{step_id}.jpg', ContentFile(file2_content), save=True)
-            print(f"File2 saved: {step.file2.path}")
+        if serializer.is_valid():
+            # Update other fields as needed
+            description = serializer.validated_data.get('description')
+            is_done = serializer.validated_data.get('is_done')
+            step.description = description
+            step.is_done = is_done
 
-        # Extract and save File3 URI
-        file3_uri = request.data.get('file3')
-        if file3_uri:
-            file3_content = base64.b64decode(file3_uri.split(',')[1])
-            step.file3.save(f'file3_{step_id}.jpg', ContentFile(file3_content), save=True)
-            print(f"File3 saved: {step.file3.path}")
+            # Save the Step instance
 
-        # Extract and save File4 URI
-        file4_uri = request.data.get('file4')
-        if file4_uri:
-            file4_content = base64.b64decode(file4_uri.split(',')[1])
-            step.file4.save(f'file4_{step_id}.jpg', ContentFile(file4_content), save=True)
-            print(f"File4 saved: {step.file4.path}")
+            # Extract and save File1 URI
+            file_uri = serializer.validated_data.get('file')
+            if file_uri and not file_uri.startswith("/static"):
+                file_content = base64.b64decode(file_uri.split(',')[0])
+                step.file.save(f'file_{step_id}.jpg', ContentFile(file_content), save=True)
+                print(f"File saved: {step.file.path}")
 
-        # Extract and save Sign Sheet URI
-        sign_sheet_uri = request.data.get('sign_sheet')
-        if sign_sheet_uri:
-            sign_sheet_content = base64.b64decode(sign_sheet_uri.split(',')[1])
-            step.sign_sheet.save(f'sign_sheet_{step_id}.jpg', ContentFile(sign_sheet_content), save=True)
-            print(f"Sign Sheet saved: {step.sign_sheet.path}")
+            # Extract and save File2 URI
+            file2_uri = serializer.validated_data.get('file2')
+            if file2_uri and not file2_uri.startswith("/static"):
+                file2_content = base64.b64decode(file2_uri.split(',')[0])
+                step.file2.save(f'file2_{step_id}.jpg', ContentFile(file2_content), save=True)
+                print(f"File2 saved: {step.file2.path}")
 
-        # Update description and is_done
-        description = request.data['description']
-        is_done = request.data['is_done']
+            # Extract and save File3 URI
+            file3_uri = serializer.validated_data.get('file3')
+            if file3_uri and not file3_uri.startswith("/static"):
+                file3_content = base64.b64decode(file3_uri.split(',')[0])
+                step.file3.save(f'file3_{step_id}.jpg', ContentFile(file3_content), save=True)
+                print(f"File3 saved: {step.file3.path}")
 
-        step.description = description
-        step.is_done = is_done.capitalize()
-        step.save()
+            # Extract and save File4 URI
+            file4_uri = serializer.validated_data.get('file4')
+            if file4_uri and not file4_uri.startswith("/static"):
+                file4_content = base64.b64decode(file4_uri.split(',')[0])
+                step.file4.save(f'file4_{step_id}.jpg', ContentFile(file4_content), save=True)
+                print(f"File4 saved: {step.file4.path}")
 
-        print("Step updated successfully")
+            # Extract and save Sign Sheet URI
+            sign_sheet_uri = serializer.validated_data.get('sign_sheet')
+            if sign_sheet_uri and not sign_sheet_uri.startswith("/static"):
+                sign_sheet_content = base64.b64decode(sign_sheet_uri.split(',')[0])
+                step.sign_sheet.save(f'sign_sheet_{step_id}.jpg', ContentFile(sign_sheet_content), save=True)
+                print(f"Sign Sheet saved: {step.sign_sheet.path}")
 
-        return JsonResponse({'message': 'Step updated successfully.'}, status=status.HTTP_200_OK)
+            
+            step.save() 
 
+
+            return JsonResponse({'message': 'Step updated successfully.'}, status=status.HTTP_200_OK)
+        else:
+            return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+@api_view(['GET'])
+def logout_view(request, email):
+    print(email)
+    if request.method == "GET":
+        user = MyUser.objects.get(email=email)
+        print(user)
+        request.session['user_id'] = user.id
+        print(request)
+
+        logout(request)
+
+        return JsonResponse({'detail': 'Logout successful'})
