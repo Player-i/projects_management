@@ -1,0 +1,363 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div id="headerContainer">
+  <div>
+      <h2>Edit Budget</h2>
+  </div>
+  <a id="backButton" href="{% url 'job_details' job.id %}" class="btn btn-danger">Back</a></div>
+
+<form method="post" action="{% url 'edit_budget' job.id %}" id="budgetForm">
+    {% csrf_token %}
+      <table id="fieldTable">
+        <thead>
+          <tr>
+            <th>Field Name</th>
+            <th>Materials</th>
+            <th>Labor</th>
+            <th>Equipment</th>
+            <th>Subcontract</th>
+            <th>Other</th>
+            <th>Total</th> <!-- New column for totals -->
+          </tr>
+        </thead>
+            <tbody id="fieldContainer">
+                    {% for field, values in budget.items %}
+
+                        {% if field != "job" and field != "initial_budget" and field != "id" %}
+                            {% if values.materials != 0 or values.labor != 0 or values.equipment != 0 or values.subcontract != 0 or values.other != 0 %}
+                            <tr class="field-row">
+                                <td>{{ values.name }}</td>
+                                <td><input type="text" name="{{ field }}_materials" value="{{ values.materials }}" class="field-input"></td>
+                                <td><input type="text" name="{{ field }}_labor" value="{{ values.labor }}" class="field-input"></td>
+                                <td><input type="text" name="{{ field }}_equipment" value="{{ values.equipment }}" class="field-input"></td>
+                                <td><input type="text" name="{{ field }}_subcontract" value="{{ values.subcontract }}" class="field-input"></td>
+                                <td><input type="text" name="{{ field }}_other" value="{{ values.other }}" class="field-input"></td>
+                                <td class="field-total">0</td>
+                            </tr>
+                            {% endif%}
+                        {% endif %}
+                    {% endfor %}
+          </tbody>
+        <tfoot>
+          <tr>
+            <td><strong>Subtotal</strong></td>
+            <td><span id="materialsSubtotal">0</span></td>
+            <td><span id="laborSubtotal">0</span></td>
+            <td><span id="equipmentSubtotal">0</span></td>
+            <td><span id="subcontractSubtotal">0</span></td>
+            <td><span id="otherSubtotal">0</span></td>
+            <td><span id="totalSubtotal">0</span></td> <!-- New column for subtotal -->
+          </tr>
+        </tfoot>
+      </table>
+      <table id="addFieldRow" class="d-flex align-items-center justify-content-between">
+        <tr>
+          <td colspan="7">
+            <select id="addFieldSelect" class="form-control">
+                <option value="architecture_mep_egr" name="Architecture/MEP EGR" data-cost-code="300.00000">Architecture/MEP EGR</option>
+                <option value="engineering_surveying" name="Engineering/Surveying" data-cost-code="310.00000">Engineering/Surveying</option>
+                <option value="town_review_fees" name="Town Review Fees" data-cost-code="320.00000">Town Review Fees</option>
+        
+                <option value="studies" name="Studies" data-cost-code="350.00000">Studies</option>
+                <option value="estimating_bidding" name="Estimating & Bidding" data-cost-code="400.00000">Estimating & Bidding</option>
+                <option value="administration_fees" name="Administration Fees" data-cost-code="610.00000">Administration Fees</option>
+                <option value="commission_expense" name="Commission Expense" data-cost-code="710.00000">Commission Expense</option>
+                <option value="settlement_fees" name="Settlement Fees" data-cost-code="720.00000">Settlement Fees</option>
+                <option value="legal_fees" name="Legal Fees" data-cost-code="730.00000">Legal Fees</option>
+                <option value="accounting_fees" name="Accounting Fees" data-cost-code="750.00000">Accounting Fees</option>
+                <option value="marketing_expense" name="Marketing Expense" data-cost-code="760.00000">Marketing Expense</option>
+                <option value="permits_fees" name="Permits & Fees" data-cost-code="890.90000">Permits & Fees</option>
+                <option value="utility_fees" name="Utility Fees" data-cost-code="900.00000">Utility Fees</option>
+                <option value="management_fee" name="Management Fee" data-cost-code="1000.00000">Management Fee</option>
+                <option value="administration_requirements" name="Administration Requirements" data-cost-code="1300.00000">Administration Requirements</option>
+                <option value="project_management_supervision" name="Project Management/Supervision" data-cost-code="1310.00000">Project Management/Supervision</option>
+                <option value="testing_inspection" name="Testing & Inspection" data-cost-code="1450.00000">Testing & Inspection</option>
+                <option value="temporary_facilities_control" name="Temporary Facilities & Control" data-cost-code="1500.00000">Temporary Facilities & Control</option>
+                <option value="execution_requirements" name="Execution Requirements" data-cost-code="1700.00000">Execution Requirements</option>
+                <option value="surveying_field_docs" name="Surveying & Field Docs" data-cost-code="1720.00000">Surveying & Field Docs</option>
+        
+                <option value="pest_control" name="Pest Control" data-cost-code="1730.00000">Pest Control</option>
+                <option value="dumpsters_construction_cleaning" name="Dumpsters/Construction Cleaning" data-cost-code="1740.00000">Dumpsters/Construction Cleaning</option>
+                <option value="final_cleaning" name="Final Cleaning" data-cost-code="1745.00000">Final Cleaning</option>
+                <option value="punchlist_tools_equip" name="Punchlist/Tools/Equip" data-cost-code="1800.00000">Punchlist/Tools/Equip</option>
+                <option value="operation_maintenance" name="Operation & Maintenance" data-cost-code="1830.00000">Operation & Maintenance</option>
+                <option value="excavation" name="Excavation" data-cost-code="2000.00000">Excavation</option>
+                <option value="site_work_materials" name="Site Work & Materials" data-cost-code="2050.00000">Site Work & Materials</option>
+                <option value="asphalt_paving" name="Asphalt Paving" data-cost-code="2100.00000">Asphalt Paving</option>
+                <option value="pervious_concrete" name="Pervious Concrete" data-cost-code="2150.00000">Pervious Concrete</option>
+                <option value="temp_barricades" name="Temp Barricades" data-cost-code="2225.00000">Temp Barricades</option>
+                <option value="demolition" name="Demolition" data-cost-code="2230.00000">Demolition</option>
+                <option value="paving_concrete_demo" name="Paving & Concrete Demo" data-cost-code="2232.00000">Paving & Concrete Demo</option>
+                <option value="pumping_mucking" name="Pumping & Mucking" data-cost-code="2235.00000">Pumping & Mucking</option>
+                <option value="erosion_sediment_control" name="Erosion & Sediment Control" data-cost-code="2370.00000">Erosion & Sediment Control</option>
+                <option value="water" name="Water" data-cost-code="2510.00000">Water</option>
+                <option value="well" name="Well" data-cost-code="2520.00000">Well</option>
+                <option value="sewer" name="Sewer" data-cost-code="2530.00000">Sewer</option>
+                <option value="septic_system" name="Septic System" data-cost-code="2540.00000">Septic System</option>
+                <option value="storm_drain_drainage" name="Storm Drain/Drainage" data-cost-code="2600.00000">Storm Drain/Drainage</option>
+                <option value="bioretention_stormwater" name="Bioretention/Stormwater" data-cost-code="2650.00000">Bioretention/Stormwater</option>
+                <option value="curb_gutter" name="Curb & Gutter" data-cost-code="2770.00000">Curb & Gutter</option>
+                <option value="site_improvements_amenities" name="Site Improvements & Amenities" data-cost-code="2800.00000">Site Improvements & Amenities</option>
+                <option value="plantings" name="Plantings" data-cost-code="2900.00000">Plantings</option>
+                <option value="concrete" name="CONCRETE" data-cost-code="3000.00000">CONCRETE</option>
+                <option value="concrete_construction" name="Concrete Construction" data-cost-code="3050.00000">Concrete Construction</option>
+                <option value="dig_pour_footers" name="Dig & Pour Footers" data-cost-code="3060.00000">Dig & Pour Footers</option>
+                <option value="foundation" name="Foundation" data-cost-code="3070.00000">Foundation</option>
+                <option value="slab_prep_backfill" name="Slab Prep & Backfill" data-cost-code="3080.00000">Slab Prep & Backfill</option>
+        
+                <option value="interior_concrete" name="Interior Concrete" data-cost-code="3100.00000">Interior Concrete</option>
+                <option value="exterior_concrete" name="Exterior Concrete" data-cost-code="3150.00000">Exterior Concrete</option>
+                <option value="pre_cast_concrete" name="Pre-Cast Concrete" data-cost-code="3200.00000">Pre-Cast Concrete</option>
+                <option value="cast_in_place_concrete" name="Cast in Place Concrete" data-cost-code="3300.00000">Cast in Place Concrete</option>
+                <option value="gypcrete" name="Gypcrete" data-cost-code="3400.00000">Gypcrete</option>
+                <option value="masonry_material_labor" name="Masonry Material & Labor" data-cost-code="4050.00000">Masonry Material & Labor</option>
+                <option value="stone_material_labor" name="Stone Material & Labor" data-cost-code="4300.00000">Stone Material & Labor</option>
+                <option value="brick_material_labor" name="Brick Material & Labor" data-cost-code="4350.00000">Brick Material & Labor</option>
+                <option value="structural_steel" name="Structural Steel" data-cost-code="5100.00000">Structural Steel</option>
+                <option value="metal_framing" name="Metal Framing" data-cost-code="5400.00000">Metal Framing</option>
+                <option value="metal_railings" name="Metal Railings" data-cost-code="5440.00000">Metal Railings</option>
+                <option value="metal_fabrications" name="Metal Fabrications" data-cost-code="5500.00000">Metal Fabrications</option>
+                <option value="rough_carpentry_material" name="Rough Carpentry Material" data-cost-code="6110.00000">Rough Carpentry Material</option>
+                <option value="rough_carpentry_labor" name="Rough Carpentry Labor" data-cost-code="6120.00000">Rough Carpentry Labor</option>
+                <option value="floor_trusses" name="Floor Trusses" data-cost-code="6140.00000">Floor Trusses</option>
+                <option value="structural_wood_beams" name="Structural Wood Beams" data-cost-code="6145.00000">Structural Wood Beams</option>
+                <option value="roof_trusses" name="Roof Trusses" data-cost-code="6150.00000">Roof Trusses</option>
+                <option value="exterior_trim_rails" name="Exterior Trim & Rails" data-cost-code="6160.00000">Exterior Trim & Rails</option>
+                <option value="trim_carpentry" name="Trim Carpentry" data-cost-code="6200.00000">Trim Carpentry</option>
+                <option value="molding_millwork" name="Molding & Millwork" data-cost-code="6220.00000">Molding & Millwork</option>
+                <option value="wood_stairs" name="Wood Stairs" data-cost-code="6230.00000">Wood Stairs</option>
+                <option value="interior_rails" name="Interior Rails" data-cost-code="6240.00000">Interior Rails</option>
+                <option value="plastic_fabrications" name="Plastic Fabrications" data-cost-code="6600.00000">Plastic Fabrications</option>
+                <option value="foundation_waterproofing" name="Foundation Waterproofing" data-cost-code="7100.00000">Foundation Waterproofing</option>
+                <option value="thermal_protection" name="Thermal Protection" data-cost-code="7200.00000">Thermal Protection</option>
+                <option value="eifs" name="EIFS" data-cost-code="7240.00000">EIFS</option>
+                <option value="insulation" name="Insulation" data-cost-code="7300.00000">Insulation</option>
+                <option value="shingles_roof_coverings" name="Shingles, Roof Coverings" data-cost-code="7310.00000">Shingles, Roof Coverings</option>
+                <option value="vinyl_siding" name="Vinyl Siding" data-cost-code="7460.00000">Vinyl Siding</option>
+                <option value="gutters_downspouts" name="Gutters & Downspouts" data-cost-code="7470.00000">Gutters & Downspouts</option>
+                <option value="roof_curbs" name="Roof Curbs" data-cost-code="7480.00000">Roof Curbs</option>
+                <option value="membrane_roofing" name="Membrane Roofing" data-cost-code="7500.00000">Membrane Roofing</option>
+                <option value="membrane_decking" name="Membrane Decking" data-cost-code="7550.00000">Membrane Decking</option>
+                <option value="sheet_metal_roofing" name="Sheet Metal Roofing" data-cost-code="7600.00000">Sheet Metal Roofing</option>
+                <option value="awnings" name="Awnings" data-cost-code="7700.00000">Awnings</option>
+                <option value="fireproofing" name="Fireproofing" data-cost-code="7800.00000">Fireproofing</option>
+                <option value="caulking_joint_sealers" name="Caulking/Joint Sealers" data-cost-code="7900.00000">Caulking/Joint Sealers</option>
+                <option value="open_field" name="OPEN" data-cost-code="8000.00000">OPEN</option>
+                <option value="int_ext_doors" name="Int./Ext. Doors" data-cost-code="8100.00000">Int./Ext. Doors</option>
+                <option value="exterior_doors" name="Exterior Doors" data-cost-code="8200.00000">Exterior Doors</option>
+                <option value="sliding_glass_doors" name="Sliding Glass Doors SGD" data-cost-code="8250.00000">Sliding Glass Doors SGD</option>
+                <option value="interior_doors" name="Interior Doors" data-cost-code="8300.00000">Interior Doors</option>
+                <option value="entrances_storefronts" name="Entrances & Storefronts" data-cost-code="8400.00000">Entrances & Storefronts</option>
+                <option value="windows" name="Windows" data-cost-code="8500.00000">Windows</option>
+        
+                <option value="access_doors_hatch" name="Access Doors/Hatch" data-cost-code="8600.00000">Access Doors/Hatch</option>
+                <option value="shower_doors" name="Shower Doors" data-cost-code="8650.00000">Shower Doors</option>
+                <option value="door_hardware" name="Door Hardware" data-cost-code="8710.00000">Door Hardware</option>
+                <option value="overhead_doors" name="Overhead Doors" data-cost-code="8900.00000">Overhead Doors</option>
+                <option value="drywall_gypsum" name="Drywall & Gypsum" data-cost-code="9200.00000">Drywall & Gypsum</option>
+                <option value="tile" name="Tile" data-cost-code="9300.00000">Tile</option>
+                <option value="ceilings" name="Ceilings" data-cost-code="9500.00000">Ceilings</option>
+                <option value="flooring" name="Flooring" data-cost-code="9600.00000">Flooring</option>
+                <option value="ceramic" name="Ceramic" data-cost-code="9630.00000">Ceramic</option>
+                <option value="wood_flooring" name="Wood Flooring" data-cost-code="9640.00000">Wood Flooring</option>
+                <option value="resilient_flooring" name="Resilient Flooring" data-cost-code="9650.00000">Resilient Flooring</option>
+                <option value="rubber_flooring" name="Rubber Flooring" data-cost-code="9660.00000">Rubber Flooring</option>
+                <option value="epoxy_flooring" name="Epoxy Flooring" data-cost-code="9670.00000">Epoxy Flooring</option>
+                <option value="carpet_padding" name="Carpet & Padding" data-cost-code="9680.00000">Carpet & Padding</option>
+                <option value="wall_finishes" name="Wall Finishes" data-cost-code="9700.00000">Wall Finishes</option>
+                <option value="frp" name="FRP" data-cost-code="9750.00000">FRP</option>
+                <option value="paint_coatings" name="Paint & Coatings" data-cost-code="9900.00000">Paint & Coatings</option>
+                <option value="hardware" name="Hardware" data-cost-code="10100.00000">Hardware</option>
+                <option value="wall_corner_guards" name="Wall and Corner Guards" data-cost-code="10260.00000">Wall and Corner Guards</option>
+                <option value="window_door_blinds" name="Window & Door Blinds" data-cost-code="10280.00000">Window & Door Blinds</option>
+                <option value="pest_control" name="Pest Control" data-cost-code="10290.00000">Pest Control</option>
+                <option value="fireplaces_stoves" name="Fireplaces and Stoves" data-cost-code="10300.00000">Fireplaces and Stoves</option>
+                <option value="identification_devices" name="Identification Devices" data-cost-code="10400.00000">Identification Devices</option>
+                <option value="fire_protection_specialties" name="Fire Protection Specialties" data-cost-code="10520.00000">Fire Protection Specialties</option>
+                <option value="protective_covers" name="Protective Covers" data-cost-code="10530.00000">Protective Covers</option>
+                <option value="mailboxes_postal_reqs" name="Mailboxes Postal Req's" data-cost-code="10550.00000">Mailboxes Postal Req's</option>
+                <option value="shelving" name="Shelving" data-cost-code="10670.00000">Shelving</option>
+                <option value="signage" name="Signage" data-cost-code="10700.00000">Signage</option>
+                <option value="bath_laundry_accessories" name="Bath & Laundry Accessories" data-cost-code="10800.00000">Bath & Laundry Accessories</option>
+                <option value="fire_extinguishers" name="Fire Extinguishers" data-cost-code="10900.00000">Fire Extinguishers</option>
+                <option value="water_treatment_equip" name="Water Treatment Equip" data-cost-code="11200.00000">Water Treatment Equip</option>
+                <option value="food_service_equipment" name="Food Service Equipment" data-cost-code="11400.00000">Food Service Equipment</option>
+                <option value="appliances" name="Appliances" data-cost-code="11450.00000">Appliances</option>
+                <option value="cabinetry" name="Cabinetry" data-cost-code="12350.00000">Cabinetry</option>
+                <option value="laminate_counter_tops" name="Laminate Counter Tops" data-cost-code="12360.00000">Laminate Counter Tops</option>
+                <option value="granite_countertops" name="Granite Countertops" data-cost-code="12400.00000">Granite Countertops</option>
+                <option value="furniture" name="Furniture" data-cost-code="12500.00000">Furniture</option>
+                <option value="television" name="Television" data-cost-code="12600.00000">Television</option>
+                <option value="fire_detection_alarm" name="Fire Detection & Alarm" data-cost-code="13850.00000">Fire Detection & Alarm</option>
+                <option value="elevators" name="Elevators" data-cost-code="14200.00000">Elevators</option>
+                <option value="plumbing" name="Plumbing" data-cost-code="15100.00000">Plumbing</option>
+                <option value="plumbing_fixtures" name="Plumbing Fixtures" data-cost-code="15200.00000">Plumbing Fixtures</option>
+                <option value="hot_water_heaters" name="Hot Water Heaters" data-cost-code="15205.00000">Hot Water Heaters</option>
+                <option value="sewer_water_connection" name="Sewer & Water Connection" data-cost-code="15207.00000">Sewer & Water Connection</option>
+                <option value="gas_piping_dnu" name="Gas Piping/DNU" data-cost-code="15210.00000">Gas Piping/DNU</option>
+                <option value="pumps" name="Pumps" data-cost-code="15220.00000">Pumps</option>
+                <option value="water_meters" name="Water Meters" data-cost-code="15230.00000">Water Meters</option>
+                <option value="gas_piping_meters" name="Gas Piping/Meters" data-cost-code="15250.00000">Gas Piping/Meters</option>
+                <option value="fire_sprinkler_system" name="Fire Sprinkler System" data-cost-code="15300.00000">Fire Sprinkler System</option>
+                <option value="sprinkler_riser" name="Sprinkler Riser" data-cost-code="15350.00000">Sprinkler Riser</option>
+                <option value="exterior_stairs_rails" name="Exterior Stairs & Rails" data-cost-code="15500.00000">Exterior Stairs & Rails</option>
+                <option value="refrigeration_equipment" name="Refrigeration Equipment" data-cost-code="15600.00000">Refrigeration Equipment</option>
+                <option value="hvac" name="HVAC" data-cost-code="15700.00000">HVAC</option>
+                <option value="ventilation" name="Ventilation" data-cost-code="15720.00000">Ventilation</option>
+                <option value="testing_balancing" name="Testing & Balancing" data-cost-code="15950.00000">Testing & Balancing</option>
+                <option value="general_electric" name="General Electric" data-cost-code="16050.00000">General Electric</option>
+                <option value="electrical_fixtures" name="Electrical Fixtures" data-cost-code="16055.00000">Electrical Fixtures</option>
+                <option value="conduits" name="Conduits" data-cost-code="16100.00000">Conduits</option>
+        
+                <option value="underground_electric_service" name="Underground Electric Service" data-cost-code="16200.00000">Underground Electric Service</option>
+                <option value="exterior_site_lighting" name="Exterior Site Lighting" data-cost-code="16300.00000">Exterior Site Lighting</option>
+                <option value="low_voltage" name="Low Voltage" data-cost-code="16400.00000">Low Voltage</option>
+                <option value="communications" name="Communications" data-cost-code="16700.00000">Communications</option>
+                <option value="surveillance_cameras" name="Surveillance & Cameras" data-cost-code="16800.00000">Surveillance & Cameras</option>
+                <option value="warranty" name="Warranty" data-cost-code="25000.00000">Warranty</option>
+                <option value="warranty_bld_f" name="Warranty- Bld F" data-cost-code="25001.00000">Warranty- Bld F</option>
+                <option value="warranty_bld_d" name="Warranty- Bld D" data-cost-code="25002.00000">Warranty- Bld D</option>
+                <option value="warranty_bld_e" name="Warranty- Bld E" data-cost-code="25003.00000">Warranty- Bld E</option>
+                <option value="access_control" name="Access Control" data-cost-code="28010.00000">Access Control</option>
+            
+                <!-- Add more options for other fields -->
+              </select>
+            
+              <button type="button" id="addFieldButton" class="btn btn-primary mt-2">Add Field</button>
+
+          </td>
+        </tr>
+      </table>
+      <div class="text-center mt-2">
+        <button type="submit" class="btn btn-success">Save Budget</button>
+    </div>
+      </form>
+      
+ 
+      <script>
+        $(document).ready(function () {
+            updateTotals();
+          $("#addFieldButton").click(function () {
+            var fieldName = $("#addFieldSelect").val();
+            var field = $("#addFieldSelect option:selected").attr("name");
+            var fieldHtml = '<tr class="field-row"><td>' + field + '</td><td><input type="text" name="' + fieldName + '_materials" class="field-input"></td><td><input type="text" name="' + fieldName + '_labor" class="field-input"></td><td><input type="text" name="' + fieldName + '_equipment" class="field-input"></td><td><input type="text" name="' + fieldName + '_subcontract" class="field-input"></td><td><input type="text" name="' + fieldName + '_other" class="field-input"></td><td class="field-total">0</td></tr>';
+      
+            // Append the new row to the table
+            $("#fieldContainer").append(fieldHtml);
+      
+            // Update totals
+            updateTotals();
+          }); 
+      
+      
+          // Update totals when input values change
+          $("#fieldContainer").on("input", ".field-input", function () {
+            updateTotals();
+          });
+      
+          function updateTotals() {
+            var materialsSubtotal = 0,
+              laborSubtotal = 0,
+              equipmentSubtotal = 0,
+              subcontractSubtotal = 0,
+              otherSubtotal = 0,
+              totalSubtotal = 0;
+      
+            $(".field-row").each(function () {
+              var row = $(this);
+              var materials = parseInt(row.find("[name$='_materials']").val()) || 0;
+              var labor = parseInt(row.find("[name$='_labor']").val()) || 0;
+              var equipment = parseInt(row.find("[name$='_equipment']").val()) || 0;
+              var subcontract = parseInt(row.find("[name$='_subcontract']").val()) || 0;
+              var other = parseInt(row.find("[name$='_other']").val()) || 0;
+              var total = materials + labor + equipment + subcontract + other;
+      
+              materialsSubtotal += materials;
+              laborSubtotal += labor;
+              equipmentSubtotal += equipment;
+              subcontractSubtotal += subcontract;
+              otherSubtotal += other;
+              totalSubtotal += total;
+      
+              row.find(".field-total").text(total);
+            });
+      
+            $("#materialsSubtotal").text(materialsSubtotal);
+            $("#laborSubtotal").text(laborSubtotal);
+            $("#equipmentSubtotal").text(equipmentSubtotal);
+            $("#subcontractSubtotal").text(subcontractSubtotal);
+            $("#otherSubtotal").text(otherSubtotal);
+            $("#totalSubtotal").text(totalSubtotal);
+          }
+        });
+
+        
+      </script>
+      
+      <style>
+        #headerContainer {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          margin-bottom: 4rem; /* Adjust the margin as needed */
+        }
+
+        #backButton {
+          margin-left: 1rem; /* Adjust the margin as needed */
+        } 
+        /* Adjust the style of the Add Field row */
+        #addFieldRow {
+          background-color: #f2f2f2; /* Background color to match table header */
+          border-bottom: 1px solid #ddd; /* Border to separate it from the table rows */
+        }
+
+        /* Style for the Add Field button */
+        #addFieldButton {
+          margin-left: 10px; /* Add some spacing between the select and the button */
+          /* Add more styles as needed */
+        }
+        #fieldTable {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 20px;
+        }
+      
+        #fieldTable th, #fieldTable td {
+          border: 1px solid #ddd;
+          padding: 8px;
+          text-align: left;
+        }
+      
+        #fieldTable th {
+          background-color: #f2f2f2;
+        }
+      
+        #fieldTable tfoot td {
+          background-color: #e6e6e6;
+        }
+      
+        #fieldTable .field-row td {
+          height: 40px;
+        }
+      
+        #fieldTable input {
+          width: 80px;
+          padding: 8px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          box-sizing: border-box;
+          transition: border-color 0.3s;
+        }
+        
+        #fieldTable input:focus {
+          border-color: #3498db;
+          outline: none;
+        }
+      
+        #fieldTable .field-total {
+          font-weight: bold;
+        }
+      </style>
+      
+  {% endblock %}

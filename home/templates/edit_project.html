@@ -5,13 +5,13 @@
     <div>
         {% if user.is_authenticated %}
             <a href="/logout/">Logout</a>
-            <a href="/create/">New Project</a>
+            <a href="/create_job/">New Job</a>
             <a href="/create_users/">Create a worker</a>
         {% else %}
             <a href="/login/">Login</a>
         {% endif %}
     </div>
-    <a href="/"><p>{{ user.username }}</p></a>
+    <a href="/home/"><p>{{ user.username }}</p></a>
 </div>
 
 <div class="container register-form-container" style="background-color: #333; color: #fff;">

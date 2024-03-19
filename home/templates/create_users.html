@@ -5,14 +5,14 @@
     <div>
         {% if user.is_authenticated %}
             <a href="/logout/">Logout</a>
-            <a href="/create/">New Project</a>
+            <a href="/create_job/">New Job</a>
             {% comment %} <a href="/workers/">Workers</a> {% endcomment %}
             <a href="/create_users/">Create Worker</a>
         {% else %}
             <a href="/login/">Login</a>
         {% endif %}
     </div>
-    <a href="/"><p>{{ user.username }}</p></a>
+    <a href="/home/"><p>{{ user.username }}</p></a>
 </div>
 
 <div class="container register-form-container">

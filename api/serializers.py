@@ -9,6 +9,10 @@ class UserSerializer(serializers.ModelSerializer):
         model = MyUser
         fields = '__all__'
 
+class IsUserProjectAdminSerializer(serializers.ModelSerializer):
+    is_project_manager = serializers.BooleanField()
+
+
 class EmailLoginFormSerializer(serializers.Serializer):
     username = serializers.EmailField()
     password = serializers.CharField()
@@ -67,3 +71,4 @@ class StepSerializerChange(serializers.ModelSerializer):
 
 
     # You can add any additional validation or custom behavior here if needed
+        

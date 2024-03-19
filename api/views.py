@@ -4,7 +4,7 @@ from rest_framework import serializers, status
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from home.models import MyUser, MyUserManager, Project, Step
-from .serializers import UserSerializer, EmailLoginFormSerializer, UserRegistrationSerializer, ProjectSerializer, StepSerializerSee, StepSerializerChange
+from .serializers import UserSerializer, EmailLoginFormSerializer, UserRegistrationSerializer, ProjectSerializer, StepSerializerSee, StepSerializerChange, IsUserProjectAdminSerializer
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 import base64
@@ -228,3 +228,13 @@ def logout_view(request, email):
         logout(request)
 
         return JsonResponse({'detail': 'Logout successful'})
+
+@api_view(['GET'])
+def is_user_project_manager(request, email):
+    if request.method == "GET":
+        user = MyUser.objects.get(email=email)
+        is_project_admin = user.is_project_manager
+        # Return a single boolean value without using many=True
+        return JsonResponse({'is_project_manager': is_project_admin})
+
+

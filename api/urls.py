@@ -9,6 +9,8 @@ urlpatterns = [
     path('project-details/<int:project_id>/<str:email>/', views.get_project_details, name='get_project_details'),
     path('edit-step/<int:step_id>/', views.edit_step, name='edit-step'),
     path('logout/<str:email>/', views.logout_view, name='logout'),
-    path('get_step_details/<int:step_id>/', views.get_step_details, name='get-step-details')
+    path('get_step_details/<int:step_id>/', views.get_step_details, name='get-step-details'),
+    path('is_user_project_manager/<str:email>/', views.is_user_project_manager, name='is_user_project_manager')
+
 
 ] 

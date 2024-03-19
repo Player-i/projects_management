@@ -8,25 +8,34 @@ from .forms import (
     ProjectForm,
     ManagerCreatesUserForm,
     StepDoneForm,
+    JobForm,
+    BudgetForm
 )
 from django.contrib.auth import authenticate, login, logout
 from .models import Project, Step
 from django import forms
-from .models import MyUser
+from .models import MyUser, Job, Budget
 from django.forms import modelformset_factory
-
+from django.forms.models import model_to_dict
 
 # Create your views here.
 
+
+def landing_page(request):
+    return render(request, "landing_page.html")
 
 def home(request):
     context = {}
     user = request.user
     if user.is_authenticated:
         if user.is_project_manager:
+            jobs = (
+                Job.objects.filter(author=user)
+                .order_by("-id")  # Reverse order by project ID
+                .all()
+            )
             projects = (
                 Project.objects.filter(author=user)
-                .prefetch_related("step_set")
                 .order_by("-id")  # Reverse order by project ID
                 .all()
             )
@@ -42,10 +51,59 @@ def home(request):
                 .order_by("-id")
             )
         context["projects"] = projects
+        context["jobs"] = jobs
         context["user"] = user
         return render(request, "home.html", context=context)
     else:
         return redirect("login")
+
+
+
+def create_job(request):
+    if request.method == "POST":
+        form = JobForm(request.POST)
+        if form.is_valid():
+            job = form.save(commit=False)  # Don't save the user yet
+            job.author = request.user  # Set the author to the currently logged-in user
+            job.save() 
+            return redirect("job_details", job_id= job.id)
+
+    else: 
+        job_form = JobForm()
+
+
+    return render(request, "create_job.html", {"job_form": job_form})
+
+def job_details(request, job_id):
+    job = get_object_or_404(Job, id=job_id)
+
+    try:
+        project = Project.objects.get(job=job)
+    except Project.DoesNotExist:
+        project = None
+
+    # Check if a budget exists for the job
+    try:
+        # Check if a budget exists for the job
+        budgets = Budget.objects.filter(job=job)
+
+        # If there are multiple budgets, you may want to choose one or handle it accordingly
+        budget = budgets.first()
+    except Budget.DoesNotExist:
+        budget = None
+
+    return render(request, 'job_details.html', {'job': job, 'project': project, 'budget': budget})
+
+def delete_job(request, job_id):
+    # Check if the user is authenticated and a manager
+    if request.user.is_authenticated and request.user.is_project_manager:
+        job = get_object_or_404(Job, id=job_id)
+        
+        # Perform any additional logic before deleting, if needed
+        
+        job.delete()
+        
+        return redirect('home')
 
 
 def create_users(request):
@@ -138,8 +196,106 @@ def step_details(request, step_id):
     context["project_id"] = project_id  # Pass the project ID to the template
     return render(request, "step_details.html", context)
 
+def create_budget(request, job_id):
+    job = Job.objects.get(pk=job_id)
 
-def create_project(request):
+    if request.method == 'POST':
+        # Get the existing budget instance or create a new one
+        budget_instance, created = Budget.objects.get_or_create(job=job)
+
+        # Iterate over POST data and update the budget fields
+        # Iterate over the keys in request.POST and update the budget fields
+        # Iterate over the keys in request.POST and update the budget fields
+        for key, value in request.POST.items():
+            if key not in ['csrfmiddlewaretoken', 'job', 'materials', 'labor', 'equipment', 'subcontract', 'other']:
+                # Extract field name and type from the key
+                
+                field_name, field_type = key.rsplit('_', 1)
+
+                # Check if the field type is valid (materials, labor, equipment, subcontract, other)
+                if field_type in ['materials', 'labor', 'equipment', 'subcontract', 'other']:
+                    # Convert the value to an integer if possible, default to 0
+                    field_value = int(value) if value.isdigit() else 0
+
+                    field = getattr(budget_instance, field_name)
+                    field[field_type] = field_value
+
+        # Save the changes to the budget instance
+        budget_instance.initial_budget = True
+        budget_instance.save()
+
+        # Duplicate Budget
+        budget_instance.pk = None
+        budget_instance.initial_budget = False
+        budget_instance.save()
+
+        # Redirect to the appropriate page
+        return redirect('job_details', job_id= job_id)
+
+    return render(request, 'create_budget.html', {'job': job})
+
+def edit_budget(request, job_id):
+    
+    job = get_object_or_404(Job, pk=job_id)
+
+
+    if request.method == 'POST':
+    # Get the existing budget instance or create a new one
+        budget_instance = Budget.objects.filter(job=job, initial_budget=False).first()
+
+    # Iterate over POST data and update the budget fields
+    # Iterate over the keys in request.POST and update the budget fields
+    # Iterate over the keys in request.POST and update the budget fields
+        for key, value in request.POST.items():
+            if key not in ['csrfmiddlewaretoken', 'job', 'materials', 'labor', 'equipment', 'subcontract', 'other']:
+                # Extract field name and type from the key
+                
+                field_name, field_type = key.rsplit('_', 1)
+
+                # Check if the field type is valid (materials, labor, equipment, subcontract, other)
+                if field_type in ['materials', 'labor', 'equipment', 'subcontract', 'other']:
+                    # Convert the value to an integer if possible, default to 0
+                    field_value = int(value) if value.isdigit() else 0
+
+                    field = getattr(budget_instance, field_name)
+                    field[field_type] = field_value
+
+        # Save the changes to the budget instance
+        budget_instance.save()
+
+
+        # Redirect to the appropriate page
+        return redirect('job_details', job_id= job_id)
+
+    # Get the job instance
+    else:
+    # Get the budget associated with the job where initial_budget is False
+        budget = Budget.objects.filter(job=job, initial_budget=False).first()
+        print(budget)
+        budget_dict = model_to_dict(budget) if budget else {}
+        # Your logic for handling the budget goes here
+
+        return render(request, 'edit_budget.html', {'job': job, 'budget': budget_dict})
+
+
+def initial_budget(request, job_id):
+    
+    job = get_object_or_404(Job, pk=job_id)
+
+
+
+    # Get the budget associated with the job where initial_budget is False
+    budget = Budget.objects.filter(job=job, initial_budget=True).first()
+    print(budget)
+    budget_dict = model_to_dict(budget) if budget else {}
+    # Your logic for handling the budget goes here
+
+    return render(request, 'initial_budget.html', {'job': job, 'budget': budget_dict})
+
+
+
+def create_project(request, job_id):
+    job = get_object_or_404(Job, id=job_id)
     user = request.user
     users = MyUser.objects.filter(manager=user.email)
     StepFormSet = forms.formset_factory(
@@ -154,8 +310,8 @@ def create_project(request):
             project = project_form.save(commit=False)
 
             # Set the author (manager) to the currently logged-in user
+            project.job = job
             project.author = request.user
-            print(project.author)
 
             # Save the project to the database with the author assigned
             project.save()
@@ -169,7 +325,7 @@ def create_project(request):
                 step.assigned_to = assigned_to
                 step.save()
 
-            return redirect("home")  # Redirect to home page
+            return redirect("job_details", job_id=job.id)  # Redirect to home page
     else:
         project_form = ProjectForm()
         formset = StepFormSet(prefix="steps")  # Queryset is set to an empty list
@@ -185,6 +341,8 @@ def create_project(request):
             "total_form_count": total_form_count,  # Pass total form count to the template
         },
     )
+
+
 
 
 def project_details(request, project_id):
@@ -209,6 +367,7 @@ def edit_project(request, project_id):
     users = MyUser.objects.filter(manager=user.email)
     project = get_object_or_404(Project, id=project_id)
     steps = project.step_set.all()
+    job_id = project.job.id
 
     StepFormSet = forms.formset_factory(form=StepForm, extra=0, min_num=1)
 
@@ -234,7 +393,7 @@ def edit_project(request, project_id):
                 step.assigned_to = assigned_to
                 step.save()
 
-            return redirect("home")  # Redirect to the home page
+            return redirect("job_details", job_id=job_id)  # Redirect to the home page
 
     else:
         project_form = ProjectForm(instance=project)
@@ -288,11 +447,12 @@ def delete_project(request, project_id):
     # Get the project instance using the project_id from the URL
     project = get_object_or_404(Project, id=project_id)
     context["project"] = project
+    job_id = project.job.id
 
     if request.method == "POST":
         project.delete()
         # Redirect the user to a different page after deletion (you can customize this URL)
-        return redirect("home")
+        return redirect("job_details", job_id=job_id)
 
     return render(request, "delete_project.html", context)
 
