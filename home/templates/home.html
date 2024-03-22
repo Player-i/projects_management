@@ -152,7 +152,7 @@
         {% if user.is_authenticated %}
             <a href="/logout/">Logout</a>
             {% if user.is_project_manager %}
-            <a href="/create_job/">New Job</a>
+            <a href="/create/">New Project</a>
             {% comment %} <a href="/workers/">Workers</a> {% endcomment %}
             <a href="/create_users/">Create Worker</a>
             {% endif %}
@@ -164,19 +164,16 @@
 </div>
 
 <div class="container">
-    {% if user.is_project_manager %}
-        <h1>Jobs</h1>
-    {% else %}
+
         <h1>Projects</h1>
 
-    {% endif %}
 
     {% if user.is_project_manager %}
-        {% for job in jobs %}
+        {% for project in projects %}
             <div class="projects-container">
                 <!-- Add a class to the project name link to trigger the popup -->
                 
-                    <h2><a href="{% url 'job_details' job.id %}">{{ job.name }}</a></h2>
+                    <h2><a href="{% url 'project_details' project.id %}">{{ project.name }}</a></h2>
 
     
                 {% comment %} <p>Today's Date: {{ project.todays_date }}</p> {% endcomment %}

@@ -215,6 +215,71 @@ def edit_step(request, step_id):
             return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+# @api_view(['POST'])
+@csrf_exempt
+def update_project_from_smartsheet(request):
+    if request.method == 'POST':
+        # Extract the rows_data from the POST request
+        rows_data = JSONParser().parse(request)
+        # Process the received data
+        rows_data = rows_data['rows_data']        
+        for row_data in rows_data:
+            # Perform any necessary actions with the row data
+            # For example, you could create or update objects in your database
+            
+            # Example: Print the row data
+            primary = row_data.get('Primary')
+            status = row_data.get('Status')
+            date = row_data.get('Date')
+            customer = row_data.get('Customer')
+            contact = row_data.get('Contact')
+            contact_phone = row_data.get('Contact Phone')
+            address = row_data.get('Address')
+            scope = row_data.get('Scope')
+            number = row_data.get('#')
+            on_site_time = row_data.get('On Site Time')
+            employee_one = row_data.get('Employee One')
+            employee_two = row_data.get('Employee Two')
+            employee_three = row_data.get('Employee Three')
+            employee_four = row_data.get('Employee Four')
+            work_to_be_performed = row_data.get('Work to be Performed')
+            shop_arrival_time = row_data.get('Shop Arrival Time')
+            vehicle = row_data.get('Vehicle')
+            equipment_needed = row_data.get('Equipment Needed')
+            special_instruction = row_data.get('Special Instruction')
+
+            project_name = f'{customer}, {address} {contact_phone}'
+            user = MyUser.objects.get(email="dterrero10@gmail.com")
+            project, created = Project.objects.get_or_create(name=project_name, defaults={'author': user})
+            project.equipment = equipment_needed
+            project.vehicle = vehicle
+            project.todays_date = date
+            project.description = work_to_be_performed
+            project.save()
+
+            employees = [employee_one, employee_two, employee_three, employee_four]
+
+            for employee in employees:
+                try:
+                    user = MyUser.objects.get(username=employee)
+                    if user is not None:
+                        # Create a step for the employee
+                        step = Step.objects.create(project=project, assigned_to=user.username)
+                        step.description = special_instruction
+                        step.todays_date = date
+                        step.save()
+                except MyUser.DoesNotExist:
+                    pass
+
+
+
+
+
+        # Respond with a success message or any other relevant data
+        return JsonResponse({'message': 'Data received successfully'})
+    else:
+        # Handle GET requests or any other unsupported methods
+        return JsonResponse({'error': 'Unsupported method'}, status=405)
 
 @api_view(['GET'])
 def logout_view(request, email):

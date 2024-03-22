@@ -10,7 +10,8 @@ urlpatterns = [
     path('edit-step/<int:step_id>/', views.edit_step, name='edit-step'),
     path('logout/<str:email>/', views.logout_view, name='logout'),
     path('get_step_details/<int:step_id>/', views.get_step_details, name='get-step-details'),
-    path('is_user_project_manager/<str:email>/', views.is_user_project_manager, name='is_user_project_manager')
+    path('is_user_project_manager/<str:email>/', views.is_user_project_manager, name='is_user_project_manager'),
+    path('update_project_from_smartsheet/', views.update_project_from_smartsheet, name='update_project_from_smartsheet'),
 
 
 ] 

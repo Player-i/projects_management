@@ -24,11 +24,9 @@ urlpatterns = [
     path("login/", views.user_login, name="login"),
     path("register/", views.register, name="register"),
     path("logout/", views.logout_view, name="logout"),
-    path("create_job/", views.create_job, name="create_job"),
-    path("create/<int:job_id>/", views.create_project, name="create_project"),
+    path("create/", views.create_project, name="create_project"),
     path("workers/", views.workers, name="workers"),
     path("create_users/", views.create_users, name="create_users"),
-    path("job/<int:job_id>", views.job_details, name="job_details"),
     path("step/<int:step_id>/", views.step_details, name="step_details"),
     path("project/<int:project_id>/", views.project_details, name="project_details"),
     path("edit/<int:project_id>/", views.edit_project, name="edit_project"),
@@ -39,9 +37,5 @@ urlpatterns = [
     path(
         "duplicate/<int:project_id>/", views.duplicate_project, name="duplicate_project"
     ),
-    path("delete_job/<int:job_id>/", views.delete_job, name="delete_job"),
-    path("create_budget/<int:job_id>", views.create_budget, name="create_budget"),
-    path("edit_budget/<int:job_id>", views.edit_budget, name="edit_budget"),
-    path("initial_budget/<int:job_id>", views.initial_budget, name="initial_budget"),
 
 ]

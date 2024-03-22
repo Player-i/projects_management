@@ -108,11 +108,7 @@
         <p class="project-description">{{ project.description }}</p>
         {% comment %} <p>Today's Date: {{ project.todays_date }}</p> {% endcomment %}
         <!-- Add the back button to go back to the home page -->
-        {% if user.is_project_manager  %}
-        <a href="{% url 'job_details' project.job.id %}" class="back-button">Back to Job</a>
-        {% else %}
         <a href="{% url 'home'  %}" class="back-button">All Projects</a>
-        {% endif %}
         {% if user.is_project_manager %}
         <a href="{% url 'edit_project' project.id %}" class="back-button">Edit Project</a>
         <a href="{% url 'delete_project' project.id %}" class="delete-button">Delete Project</a>

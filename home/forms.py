@@ -1,20 +1,9 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from .models import MyUser, Step, Project, Job, Budget
+from .models import MyUser, Step, Project
 from django.contrib.auth import authenticate
 from datetime import date
 
-
-class BudgetForm(forms.ModelForm):
-    class Meta:
-        model = Budget
-        exclude = ['job']
-
-
-class JobForm(forms.ModelForm):
-    class Meta:
-        model = Job
-        fields = ["name"]
 
 class ProjectForm(forms.ModelForm):
     class Meta:
