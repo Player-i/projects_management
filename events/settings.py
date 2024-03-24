@@ -97,24 +97,24 @@ AUTH_USER_MODEL = "home.MyUser"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
-}
-# RAILWAY
-
 # DATABASES = {
 #     "default": {
-#         "ENGINE": "django.db.backends.mysql",
-#         "NAME": "railway",
-#         "USER": "root",
-#         "PASSWORD": "eaGhf2aeDCd3-C1f2Be542hCG4fE1FA3q",
-#         "HOST": "roundhouse.proxy.rlwy.net",
-#         "PORT": "33193",
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
 #     }
 # }
+# RAILWAY
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "railway",
+        "USER": "root",
+        "PASSWORD": "CNmskhBQaRulmvVzNrNJhZKroiLmXsdp",
+        "HOST": "roundhouse.proxy.rlwy.net",
+        "PORT": "40582",
+    }
+}
 
 CSRF_TRUSTED_ORIGINS = ["https://www.facilo.co"]
 
