@@ -372,3 +372,7 @@ def workers(request):
         context["workers"] = workers
 
         return render(request, "workers.html", context=context)
+
+def privacy_policy(request):
+    return render(request, "privacy_policy.html")
+

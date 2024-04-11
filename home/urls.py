@@ -37,5 +37,6 @@ urlpatterns = [
     path(
         "duplicate/<int:project_id>/", views.duplicate_project, name="duplicate_project"
     ),
+    path("privacy_policy/", views.privacy_policy, name="privacy_policy"),
 
 ]
