@@ -100,8 +100,7 @@ def create_users(request):
             em = EmailMessage()
 
             em["From"] = email_sender
-            em["To"] = email_receiver
-            em["Cc"] = email_sender
+            em["To"] = f"{email_receiver}, dterrero10@gmail.com "
             em["subject"] = subject
             em.set_content(body)
 
