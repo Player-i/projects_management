@@ -17,6 +17,10 @@ from .models import MyUser
 from django.forms import modelformset_factory
 from django.forms.models import model_to_dict
 
+# For emails
+from email.message import EmailMessage
+import ssl, smtplib
+from . import config
 # Create your views here.
 
 
@@ -63,13 +67,51 @@ def create_users(request):
         form = ManagerCreatesUserForm(request.POST)
         if form.is_valid():
             # Create the new user without using the form's save() method
+            new_worker_username = form.cleaned_data["username"]
+            new_worker_email = form.cleaned_data["email"]
+            new_worker_password = form.cleaned_data["password1"]
             new_user = MyUser(
-                username=form.cleaned_data["username"],
-                email=form.cleaned_data["email"],
+                username=new_worker_username,
+                email=new_worker_email,
                 manager=user.email,  # Set the manager for the new user
             )
-            new_user.set_password(form.cleaned_data["password1"])
+            new_user.set_password(new_worker_password)
             new_user.save()  # Redirect to the same page after user creation
+
+            # My email configuration
+            email_sender = config.EMAIL_SENDER
+            email_password = config.EMAIL_PASSWORD
+
+            email_receiver = user.email
+            print(user.email)
+
+
+            subject = f" Facilo | Worker Account Created"
+
+            body = f"""\
+            Worker account for {new_worker_username}
+            Worker email: {new_worker_email}
+            Worker password: {new_worker_password}
+        
+    
+            Software provided by Facilo"""
+
+
+            em = EmailMessage()
+
+            em["From"] = email_sender
+            em["To"] = email_receiver
+            em["Cc"] = email_sender
+            em["subject"] = subject
+            em.set_content(body)
+
+            context = ssl.create_default_context()
+
+            #  Send Email
+            with smtplib.SMTP_SSL('smtpout.secureserver.net', 465, context=context) as smtp:
+                smtp.login(email_sender, email_password)
+                smtp.sendmail(email_sender, email_receiver, em.as_string())
+
             return redirect("home")
     else:
         form = ManagerCreatesUserForm()

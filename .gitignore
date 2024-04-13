@@ -3,3 +3,6 @@
 
 # Database
 *.sqlite3
+
+#Different Credentials
+home/config.py
