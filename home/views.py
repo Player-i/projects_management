@@ -34,10 +34,12 @@ def home(request):
         if user.is_project_manager:
 
             projects = (
-                Project.objects.filter(author=user)
+                Project.objects.filter(author=user, step__isnull=False)
                 .order_by("-id")  # Reverse order by project ID
+                .distinct()
                 .all()
             )
+
         else:
             manager = MyUser.objects.get(email=user.manager)
             projects = (
