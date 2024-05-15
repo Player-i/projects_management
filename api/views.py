@@ -89,9 +89,9 @@ def get_user_projects(request, email):
         user = MyUser.objects.get(email=email)
         if user.is_project_manager:
             projects = (
-                Project.objects.filter(author=user)
-                .prefetch_related("step_set")
+                Project.objects.filter(author=user, step__isnull=False)
                 .order_by("-id")  # Reverse order by project ID
+                .distinct()
                 .all()
             )
         else:
