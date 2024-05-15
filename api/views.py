@@ -261,7 +261,7 @@ def update_project_from_smartsheet(request):
 
             for employee in employees:
                 try:
-                    user = MyUser.objects.get(username=employee)
+                    user = MyUser.objects.get(email=employee)
                     if user is not None:
                         # Create a step for the employee
                         step = Step.objects.create(project=project, assigned_to=user.username)

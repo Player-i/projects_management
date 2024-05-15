@@ -20,9 +20,7 @@
         {% csrf_token %}
         <p>
             <label for="id_name">Customer name, address and contact</label>
-            <input type="text" name="name" maxlength="100" value="{{ project.name}}" required id="id_name">
-            
-            
+            <input type="text" name="name" maxlength="100" value="{{ project.name}}" required id="id_name">  
           </p>
         
           
@@ -52,11 +50,7 @@
           
           <p>
             <label for="id_todays_date">Today's Date</label>
-            <input type="date" name="todays_date" value="{{ project.todays_date|date:'Y-m-d' }}" required id="id_todays_date">
-            
-            
-              
-            
+            <input type="date" name="todays_date" value="{{ project.todays_date|date:'Y-m-d' }}" required id="id_todays_date">  
           </p>
         
         <input type="hidden" name="steps-TOTAL_FORMS" value="1" id="id_steps-TOTAL_FORMS"><input type="hidden" name="steps-INITIAL_FORMS" value="0" id="id_steps-INITIAL_FORMS"><input type="hidden" name="steps-MIN_NUM_FORMS" value="1" id="id_steps-MIN_NUM_FORMS"><input type="hidden" name="steps-MAX_NUM_FORMS" value="1000" id="id_steps-MAX_NUM_FORMS">
@@ -64,10 +58,7 @@
         <div id="existing-steps">
             {% for step in steps %}
 
-                    {% comment %} <div class="form-group">
-                        <label for="id_steps-{{ forloop.counter0 }}-name">Name of the Assignment</label>
-                        <input type="text" name="steps-{{ forloop.counter0 }}-name" value="{{ step.name }}" required>
-                    </div> {% endcomment %}
+
                     <div class="form-group">
                         <label for="id_steps-{{ forloop.counter0 }}-assigned_to">Assigned to:</label>
                         <select name="steps-{{ forloop.counter0 }}-assigned_to">

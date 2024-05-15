@@ -57,10 +57,6 @@ def home(request):
 
 
 
-
-
-
-
 def create_users(request):
     user = request.user
     if request.method == "POST":
