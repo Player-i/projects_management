@@ -86,4 +86,4 @@ class Step(models.Model):
     sign_sheet = models.FileField(upload_to="static/steps/", null=True, blank=True)
 
     def __str__(self):
-        return self.name
+        return self.assigned_to
