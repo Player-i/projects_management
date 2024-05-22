@@ -63,9 +63,9 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
 class Project(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     name = models.CharField(max_length=100)
-    description = models.TextField()
-    equipment = models.TextField(blank=True)
-    vehicle = models.TextField(blank=True)
+    description = models.TextField(null=True, blank=True, default="")
+    equipment = models.TextField(null=True, blank=True, default="")
+    vehicle = models.TextField(null=True, blank=True, default="")
     todays_date = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
