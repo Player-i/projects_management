@@ -267,7 +267,7 @@ def update_project_from_smartsheet(request):
                         step = Step.objects.create(project=project, assigned_to=user.username)
                         step.description = special_instruction
                         step.todays_date = date
-                        step.name = ""
+                        # step.name = ""
                         step.save()
                         steps_created = True
                 except MyUser.DoesNotExist:
