@@ -249,7 +249,7 @@ def update_project_from_smartsheet(request):
             special_instruction = row_data.get('Special Instruction')
 
             project_name = f'{customer}, {address} {contact_phone}'
-            user = MyUser.objects.get(email="dterrero10@gmail.com")
+            user = MyUser.objects.get(email="spalko@budgetmaintenance.com")
             project, created = Project.objects.get_or_create(name=project_name, defaults={'author': user})
             project.equipment = equipment_needed
             project.vehicle = vehicle
