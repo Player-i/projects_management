@@ -155,64 +155,66 @@ def get_step_details(request, step_id):
 def edit_step(request, step_id):
     try:
         step = Step.objects.get(id=step_id)
+        print(step)
     except Step.DoesNotExist:
         return JsonResponse({'detail': 'Step not found'}, status=status.HTTP_404_NOT_FOUND)
+    data = JSONParser().parse(request)
 
-    if request.method == 'POST':
-        data = JSONParser().parse(request)
-        serializer = StepSerializerChange(data=data)
-
-        if serializer.is_valid():
-            # Update other fields as needed
-            description = serializer.validated_data.get('description')
-            is_done = serializer.validated_data.get('is_done')
-            step.description = description
-            step.is_done = is_done
-
-            # Save the Step instance
-
-            # Extract and save File1 URI
-            file_uri = serializer.validated_data.get('file')
-            if file_uri and not file_uri.startswith("/static"):
-                file_content = base64.b64decode(file_uri.split(',')[0])
-                step.file.save(f'file_{step_id}.jpg', ContentFile(file_content), save=True)
-                print(f"File saved: {step.file.path}")
-
-            # Extract and save File2 URI
-            file2_uri = serializer.validated_data.get('file2')
-            if file2_uri and not file2_uri.startswith("/static"):
-                file2_content = base64.b64decode(file2_uri.split(',')[0])
-                step.file2.save(f'file2_{step_id}.jpg', ContentFile(file2_content), save=True)
-                print(f"File2 saved: {step.file2.path}")
-
-            # Extract and save File3 URI
-            file3_uri = serializer.validated_data.get('file3')
-            if file3_uri and not file3_uri.startswith("/static"):
-                file3_content = base64.b64decode(file3_uri.split(',')[0])
-                step.file3.save(f'file3_{step_id}.jpg', ContentFile(file3_content), save=True)
-                print(f"File3 saved: {step.file3.path}")
-
-            # Extract and save File4 URI
-            file4_uri = serializer.validated_data.get('file4')
-            if file4_uri and not file4_uri.startswith("/static"):
-                file4_content = base64.b64decode(file4_uri.split(',')[0])
-                step.file4.save(f'file4_{step_id}.jpg', ContentFile(file4_content), save=True)
-                print(f"File4 saved: {step.file4.path}")
-
-            # Extract and save Sign Sheet URI
-            sign_sheet_uri = serializer.validated_data.get('sign_sheet')
-            if sign_sheet_uri and not sign_sheet_uri.startswith("/static"):
-                sign_sheet_content = base64.b64decode(sign_sheet_uri.split(',')[0])
-                step.sign_sheet.save(f'sign_sheet_{step_id}.jpg', ContentFile(sign_sheet_content), save=True)
-                print(f"Sign Sheet saved: {step.sign_sheet.path}")
-
-            
-            step.save() 
+    # Initialize the serializer with the parsed data
+    serializer = StepSerializerChange(data=data)
+    serializer.is_valid(raise_exception=False)
 
 
-            return JsonResponse({'message': 'Step updated successfully.'}, status=status.HTTP_200_OK)
-        else:
-            return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    if serializer.is_valid(raise_exception=True):
+        # Update other fields as needed
+        description = serializer.validated_data.get('description', "").strip() or ""        
+        is_done = serializer.validated_data.get('is_done')
+        print(description)
+        step.description = description
+        step.is_done = is_done
+
+        # Save the Step instance
+
+        # Extract and save File1 URI
+        file_uri = serializer.validated_data.get('file')
+        if file_uri and not file_uri.startswith("/static"):
+            file_content = base64.b64decode(file_uri.split(',')[0])
+            step.file.save(f'file_{step_id}.jpg', ContentFile(file_content), save=True)
+            print(f"File saved: {step.file.path}")
+
+        # Extract and save File2 URI
+        file2_uri = serializer.validated_data.get('file2')
+        if file2_uri and not file2_uri.startswith("/static"):
+            file2_content = base64.b64decode(file2_uri.split(',')[0])
+            step.file2.save(f'file2_{step_id}.jpg', ContentFile(file2_content), save=True)
+            print(f"File2 saved: {step.file2.path}")
+
+        # Extract and save File3 URI
+        file3_uri = serializer.validated_data.get('file3')
+        if file3_uri and not file3_uri.startswith("/static"):
+            file3_content = base64.b64decode(file3_uri.split(',')[0])
+            step.file3.save(f'file3_{step_id}.jpg', ContentFile(file3_content), save=True)
+            print(f"File3 saved: {step.file3.path}")
+
+        # Extract and save File4 URI
+        file4_uri = serializer.validated_data.get('file4')
+        if file4_uri and not file4_uri.startswith("/static"):
+            file4_content = base64.b64decode(file4_uri.split(',')[0])
+            step.file4.save(f'file4_{step_id}.jpg', ContentFile(file4_content), save=True)
+            print(f"File4 saved: {step.file4.path}")
+
+        # Extract and save Sign Sheet URI
+        sign_sheet_uri = serializer.validated_data.get('sign_sheet')
+        if sign_sheet_uri and not sign_sheet_uri.startswith("/static"):
+            sign_sheet_content = base64.b64decode(sign_sheet_uri.split(',')[0])
+            step.sign_sheet.save(f'sign_sheet_{step_id}.jpg', ContentFile(sign_sheet_content), save=True)
+            print(f"Sign Sheet saved: {step.sign_sheet.path}")
+
+        step.save()
+
+        return JsonResponse({'message': 'Step updated successfully.'}, status=status.HTTP_200_OK)
+    else:
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # @api_view(['POST'])
