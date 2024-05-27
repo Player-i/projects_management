@@ -259,11 +259,11 @@ def update_project_from_smartsheet(request):
             project.description = work_to_be_performed
             project.save()
 
-            steps_created = False
             employees = [employee_one, employee_two, employee_three, employee_four]
             for employee in employees:
                 try:
                     user = MyUser.objects.get(email=employee)
+
                     if user is not None:
                         # Create a step for the employee
                         step = Step.objects.create(project=project, assigned_to=user.username)
@@ -271,12 +271,11 @@ def update_project_from_smartsheet(request):
                         step.todays_date = date
                         # step.name = ""
                         step.save()
-                        steps_created = True
                 except MyUser.DoesNotExist:
                     pass
 
             # Check if steps are created, if not, delete the project
-            if not steps_created:
+            if not project.step_set.exists():
                 project.delete()
 
 
