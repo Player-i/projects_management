@@ -253,6 +253,7 @@ def update_project_from_smartsheet(request):
             project_name = f'{customer}, {address} {contact_phone}'
             user = MyUser.objects.get(email="spalko@budgetmaintenance.com")
             project, created = Project.objects.get_or_create(name=project_name, defaults={'author': user})
+            project.name = f'{customer}, {address} {date}'
             project.equipment = equipment_needed
             project.vehicle = vehicle
             project.todays_date = date
